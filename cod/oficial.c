@@ -138,13 +138,33 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     int VF_C;
 
     real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    /*β = ArcTan[l[1] / l[6]] // N*/
+    double ang_beta=atan(t->barras[0]/t->barras[5]);
+    /*γ = ArcTan[l[2] / l[6]] // N*/
+    double ang_gama=atan(t->barras[1]/t->barras[5]);
+    /*θ = ArcTan[(l[8] - l[6]) / l[2]] // N*/
+    double ang_theta=atan((t->barras[7]-t->barras[5])/t->barras[1]);
 
-    double ang_beta  = atan(t->barras[0]/t->barras[5]);
-    double ang_gama  = atan(t->barras[1]/t->barras[5]);
-    double ang_theta = atan((t->barras[7]-t->barras[5])/t->barras[1]);
-    
-
+    switch (tipo_trelica)
+    {
+    case 1:
+    case 4:
+    case 7:
+        break;
+    case 2:
+    case 3:
+        ang_theta=0;
+        break;
+    case 5:
+    case 6:
+        break;
+    default:
+        break;
+    }
+    FN[6]  = - (F[1]*cos(ang_theta)+cos(ang_beta)*cos(ang_theta)*FN[4]+cos(ang_theta)*FN[5]-FN[4]*sin(ang_beta)*sin(ang_theta)) / (cos(ang_gama)*cos(ang_theta)+sin(ang_gama)*sin(ang_theta));
+    FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/sin(ang_theta);
 }
+
 
 void calcula_comprimento_barras(double* barras)
 {
@@ -176,6 +196,16 @@ int main(int argc, char const *argv[])
     for(int i=0;i<NUM_FORCAS_CARREG;i++){
         t.F[i]=10;
     }
+
+    int tipo = calcula_tipo_trelica(&t);
+    printf("Tipo de treliça: %d\n",tipo);
+
+    calcula_reacoes(&t,0);
+    calcula_A(&t,0,tipo);
+    calcula_B(&t,0,tipo);
+    calcula_F(&t,0,tipo);
+
+    printf("FN[0]: %.4f F[4]: %.4f F[1]:%.4f FN[5]:%.4f FN[6]:%.4f FN[11]:%.4f\n",t.FN[0],t.FN[4],t.FN[1],t.FN[5],t.FN[6],t.FN[11]);
 
     calcula_reacoes(&t,1);
     printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
