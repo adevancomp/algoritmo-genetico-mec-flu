@@ -55,7 +55,7 @@ void calcula_reacoes(trelica* t,int calc_virtual,double* RAx,double* RAy,double*
     double numerador = VF_C*somat_barras(t,0,1)+ F[1]*t->barras[0] + F[2]*somat_barras(t,0,1)+F[3]*somat_barras(t,0,2)+F[4]*somat_barras(t,0,3);
     double denominador =somat_barras(t,0,3);
     *REy = numerador/denominador;
-    *RAy = -VF_C + somat_forcas(F,0,4) - (*REy);
+    *RAy = VF_C + somat_forcas(F,0,4) - (*REy);
 }
 
 void calcula_comprimento_barras(double* barras)
@@ -85,8 +85,12 @@ int main(int argc, char const *argv[])
 
     calcula_comprimento_barras(t.barras);
 
-    for(int i=0;i<NUM_BARRAS;i++)
-    {
-        printf("barra %i = %.3f\n",i,t.barras[i]);
+    for(int i=0;i<NUM_FORCAS_CARREG;i++){
+        t.F[i]=10;
     }
+
+    double RAx,RAy,REy;
+    calcula_reacoes(&t,0,&RAx,&RAy,&REy);
+    printf("RAx : %.4f RAy: %.4f REy: %.4f",RAx,RAy,REy);
+
 }
