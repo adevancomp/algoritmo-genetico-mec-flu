@@ -136,6 +136,7 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     double* RAx,*RAy,*REy;
     double* F,*FN;
     int VF_C;
+    int eh_caso2_3=0;
 
     real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
     /*β = ArcTan[l[1] / l[6]] // N*/
@@ -153,6 +154,7 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
         break;
     case 2:
     case 3:
+        eh_caso2_3=1;
         ang_theta=0;
         break;
     case 5:
@@ -162,7 +164,8 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
         break;
     }
     FN[6]  = - (F[1]*cos(ang_theta)+cos(ang_beta)*cos(ang_theta)*FN[4]+cos(ang_theta)*FN[5]-FN[4]*sin(ang_beta)*sin(ang_theta)) / (cos(ang_gama)*cos(ang_theta)+sin(ang_gama)*sin(ang_theta));
-    FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/sin(ang_theta);
+    double a= (eh_caso2_3) ? 1 : sin(ang_theta);
+    FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/a;
 }
 
 
@@ -183,7 +186,7 @@ int main(int argc, char const *argv[])
     trelica t;
     /*5, 7, 9*/
     t.barras[5]= 1;
-    t.barras[7]= 2;
+    t.barras[7]= 0.5;
     t.barras[9]= 1;
     /*0, 1, 2, 3*/
     t.barras[0] = 2;
@@ -207,7 +210,7 @@ int main(int argc, char const *argv[])
 
     printf("FN[0]: %.4f F[4]: %.4f F[1]:%.4f FN[5]:%.4f FN[6]:%.4f FN[11]:%.4f\n",t.FN[0],t.FN[4],t.FN[1],t.FN[5],t.FN[6],t.FN[11]);
 
-    calcula_reacoes(&t,1);
+    calcula_reacoes(&t,0);
     printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
     printf("VRAx : %.4f VRAy: %.4f VREy: %.4f",t.VRAx,t.VRAy,t.VREy);
 }
