@@ -192,6 +192,17 @@ void calcula_E(trelica* t,int eh_virtual,int tipo_trelica)
     FN[3]=-FN[10]*cos(ang_alpha);
 }
 
+void calcula_D(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+    FN[9] = 0;
+    FN[2] = FN[3];
+}
 
 void calcula_comprimento_barras(double* barras)
 {
@@ -232,6 +243,7 @@ int main(int argc, char const *argv[])
     calcula_B(&t,0,tipo);
     calcula_F(&t,0,tipo);
     calcula_E(&t,0,tipo);
+    calcula_D(&t,0,tipo);
 
 
     for(int i=0;i<NUM_BARRAS;i++){
