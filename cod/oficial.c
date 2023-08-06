@@ -204,6 +204,41 @@ void calcula_D(trelica* t,int eh_virtual,int tipo_trelica)
     FN[2] = FN[3];
 }
 
+void calcula_G(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+    /*Cálculo dos ângulos γ(gama)  β(beta) ψ (psi)*/
+    double ang_beta = atan((t->barras[7]-t->barras[9])/t->barras[2]);
+    double ang_gama = atan(t->barras[3]/t->barras[9]);
+    double ang_psi  = atan(t->barras[2]/t->barras[9]);
+
+    switch (tipo_trelica)
+    {
+    case 1:
+    case 3:
+    case 6:                                                          
+        break;
+    case 2:
+    case 4:
+        ang_beta = 0;
+        break;
+
+    case 5:
+    case 7:
+        break;
+    default:
+        break;
+    }
+
+    FN[8]  = ( FN[10]*sin(ang_gama)*sin(ang_beta) -F[3]*cos(ang_beta) -FN[9]*cos(ang_beta) -FN[10]*cos(ang_gama)*cos(ang_beta)) / ( cos(ang_psi)*cos(ang_beta) + sin(ang_psi)*sin(ang_beta) );
+    FN[12] = (FN[10]*sin(ang_gama) -FN[8]*sin(ang_psi))/cos(ang_beta);
+}
+
 void calcula_comprimento_barras(double* barras)
 {
     /*Comprimentos que variam : 5, 7, 9   (vertical)
@@ -244,6 +279,7 @@ int main(int argc, char const *argv[])
     calcula_F(&t,0,tipo);
     calcula_E(&t,0,tipo);
     calcula_D(&t,0,tipo);
+    calcula_G(&t,0,tipo);
 
 
     for(int i=0;i<NUM_BARRAS;i++){
