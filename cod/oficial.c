@@ -147,6 +147,11 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     /*θ = ArcTan[(l[8] - l[6]) / l[2]] // N*/
     double ang_theta=atan((t->barras[7]-t->barras[5])/t->barras[1]);
 
+    /*Cálculo das forças*/
+    FN[6]  = - (F[1]*cos(ang_theta)+cos(ang_beta)*cos(ang_theta)*FN[4]+cos(ang_theta)*FN[5]-FN[4]*sin(ang_beta)*sin(ang_theta)) / (cos(ang_gama)*cos(ang_theta)+sin(ang_gama)*sin(ang_theta));
+    /*fN[12] = (fN[7] * Cos[γ] + fN[5] * Cos[β] + fN[6] + f[2]) / Sin[θ]*/
+    FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/sin(ang_theta);
+
     switch (tipo_trelica)
     {
     case 1:
@@ -155,8 +160,8 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
         break;
     case 2:
     case 3:
-        eh_caso2_3=1;
-        ang_theta=0;
+        /*Calcular de outro jeito FN[11]*/
+        FN[11] = FN[4]*sin(ang_beta) - FN[6]*sin(ang_gama);
         break;
     case 5:
     case 6:
@@ -164,9 +169,6 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     default:
         break;
     }
-    FN[6]  = - (F[1]*cos(ang_theta)+cos(ang_beta)*cos(ang_theta)*FN[4]+cos(ang_theta)*FN[5]-FN[4]*sin(ang_beta)*sin(ang_theta)) / (cos(ang_gama)*cos(ang_theta)+sin(ang_gama)*sin(ang_theta));
-    double a= (eh_caso2_3) ? 1 : sin(ang_theta);
-    FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/a;
 }
 
 void calcula_H(trelica* t,int eh_virtual,int tipo_trelica)
