@@ -1,0 +1,40 @@
+void calcula_H(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+    /*ψ – psi | λ – lambda*/
+    double ang_psi    = atan(t->barras[1]/(t->barras[7]-t->barras[5]));
+    double ang_lambda = atan(t->barras[2]/(t->barras[7]-t->barras[9]));
+
+    switch(tipo_trelica)
+    {
+        case 1:
+            FN[12] = F[11]*sin(ang_psi)/sin(ang_lambda);
+            FN[7]  = -FN[11]*cos(ang_psi)-FN[12]*cos(ang_lambda)-F[2];
+            break;
+        case 2:
+            FN[12] = FN[11];
+            FN[7]  = - F[2];
+            break;
+        case 3:
+            FN[12] = FN[11]/sin(ang_lambda);
+            FN[7]  = -F[2]-FN[12]*cos(ang_lambda);
+            break;
+        case 4:
+            FN[12] = FN[11]*sin(ang_psi);
+            FN[7]  = -F[2]-FN[11]*cos(ang_psi);
+        case 5:
+            FN[12] = 0;
+            FN[7]  = 0;
+            break;
+        case 6:
+        case 7:
+            FN[12] = F[11]*sin(ang_psi)/sin(ang_lambda);
+            FN[7]  = -FN[11]*cos(ang_psi)-FN[12]*cos(ang_lambda)-F[2];
+            break;
+    }
+}

@@ -168,6 +168,30 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/a;
 }
 
+void calcula_H(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+
+}
+
+void calcula_E(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+    double ang_alpha = atan(t->barras[9]/t->barras[3]);
+    FN[10]=(F[4]-(*REy))/sin(ang_alpha);
+    FN[3]=-FN[10]*cos(ang_alpha);
+}
+
 
 void calcula_comprimento_barras(double* barras)
 {
@@ -186,7 +210,7 @@ int main(int argc, char const *argv[])
     trelica t;
     /*5, 7, 9*/
     t.barras[5]= 1;
-    t.barras[7]= 0.5;
+    t.barras[7]= 2;
     t.barras[9]= 1;
     /*0, 1, 2, 3*/
     t.barras[0] = 2;
@@ -207,8 +231,12 @@ int main(int argc, char const *argv[])
     calcula_A(&t,0,tipo);
     calcula_B(&t,0,tipo);
     calcula_F(&t,0,tipo);
+    calcula_E(&t,0,tipo);
 
-    printf("FN[0]: %.4f F[4]: %.4f F[1]:%.4f FN[5]:%.4f FN[6]:%.4f FN[11]:%.4f\n",t.FN[0],t.FN[4],t.FN[1],t.FN[5],t.FN[6],t.FN[11]);
+
+    for(int i=0;i<NUM_BARRAS;i++){
+        printf("FN[%d]: %.4f\n",i,t.FN[i]);
+    }
 
     calcula_reacoes(&t,0);
     printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
