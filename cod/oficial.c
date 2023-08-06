@@ -5,6 +5,7 @@
 #define NUM_BARRAS 13
 #define NUM_FORCAS_CARREG 5
 #define EPSILON 1e-5
+#define PI 3.1415926535897932384626
 
 typedef struct 
 {
@@ -239,6 +240,24 @@ void calcula_G(trelica* t,int eh_virtual,int tipo_trelica)
     FN[12] = (FN[10]*sin(ang_gama) -FN[8]*sin(ang_psi))/cos(ang_beta);
 }
 
+void calcula_C(trelica* t,int eh_virtual,int tipo_trelica)
+{
+    double* RAx,*RAy,*REy;
+    double* F,*FN;
+    int VF_C;
+
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+
+    /*Cálculo dos ângulos ω(omega) φ(phi) δ(delta) μ(mi)*/
+    double ang_omega = atan(t->barras[5]/t->barras[1]);
+    double ang_phi   = fabs(ang_omega-PI/2.0);
+    double ang_mi    = atan(t->barras[9]/t->barras[2]);
+    double ang_delta = fabs(ang_mi-PI/2.0);
+
+    FN[7] = -FN[6]*cos(ang_phi)-FN[8]*cos(ang_delta)+VF_C;
+
+}
+
 void calcula_comprimento_barras(double* barras)
 {
     /*Comprimentos que variam : 5, 7, 9   (vertical)
@@ -255,9 +274,9 @@ int main(int argc, char const *argv[])
 {
     trelica t;
     /*5, 7, 9*/
-    t.barras[5]= 1;
-    t.barras[7]= 2;
-    t.barras[9]= 1;
+    t.barras[5]= 0.5;
+    t.barras[7]= 1;
+    t.barras[9]= 2;
     /*0, 1, 2, 3*/
     t.barras[0] = 2;
     t.barras[1] = 2;
@@ -280,10 +299,11 @@ int main(int argc, char const *argv[])
     calcula_E(&t,0,tipo);
     calcula_D(&t,0,tipo);
     calcula_G(&t,0,tipo);
+    calcula_C(&t,0,tipo);
 
 
     for(int i=0;i<NUM_BARRAS;i++){
-        printf("FN[%d]: %.4f\n",i,t.FN[i]);
+        printf("FN[%d]: %.4f\n",i+1,t.FN[i]);
     }
 
     calcula_reacoes(&t,0);
