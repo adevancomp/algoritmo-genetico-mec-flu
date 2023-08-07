@@ -26,7 +26,7 @@ typedef struct
     (aplicação da carga unitária) 
     normais nas barras (kN)*/
     double VFN[NUM_BARRAS];
-    /*Áreas da seção das barras*/
+    /*Áreas da seção das barras (m²)*/
     double A[NUM_BARRAS];
     /*Reações nos pontos de apoio 
     dispostos nos nós A e E (kN) */
@@ -34,11 +34,11 @@ typedef struct
     /*Reações virtuais nos pontos de apoio 
     dispostos nos nós A e E (kN) */
     double VRAx,VRAy,VREy;
-    /*Deslocamento vertical no Ponto C*/
+    /*Deslocamento vertical no Ponto C (m)*/
     double desloc_C;
-    /*Tipo de material*/
+    /*Tipo de material (kN/m²)*/
     double E;
-    /*Treliça tem um tipo
+    /*Treliça tem um tipo (de 1 a 7)
     1: L[7] > L[5] and L[7] > L[9]
     2: L[7] = L[5] and L[7] = L[9]
     3: L[7] = L[5] and L[7] > L[9]
@@ -133,7 +133,6 @@ void calcula_reacoes(trelica* t,int eh_virtual)
 void calcula_A(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     double ang_alpha = atan(t->barras[5]/t->barras[0]);
     FN[4] = (F[0] - (*RAy) )/sin(ang_alpha);
@@ -143,7 +142,6 @@ void calcula_A(trelica* t,int eh_virtual)
 void calcula_B(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     FN[1] = FN[0];
     FN[5] = 0;
@@ -152,7 +150,6 @@ void calcula_B(trelica* t,int eh_virtual)
 void calcula_F(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     /*β = ArcTan[l[1] / l[6]] // N*/
     double ang_beta=atan(t->barras[0]/t->barras[5]);
@@ -166,7 +163,7 @@ void calcula_F(trelica* t,int eh_virtual)
     /*fN[12] = (fN[7] * Cos[γ] + fN[5] * Cos[β] + fN[6] + f[2]) / Sin[θ]*/
     FN[11] = (FN[6]*cos(ang_gama)+FN[4]*cos(ang_beta)+FN[5]+F[1])/sin(ang_theta);
 
-    switch (tipo_trelica)
+    switch (t->tipo)
     {
     case 1:
     case 4:
@@ -188,14 +185,12 @@ void calcula_F(trelica* t,int eh_virtual)
 void calcula_H(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
 }
 
 void calcula_E(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     double ang_alpha = atan(t->barras[9]/t->barras[3]);
     FN[10]=(F[4]-(*REy))/sin(ang_alpha);
@@ -205,7 +200,6 @@ void calcula_E(trelica* t,int eh_virtual)
 void calcula_D(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     FN[9] = 0;
     FN[2] = FN[3];
@@ -214,14 +208,13 @@ void calcula_D(trelica* t,int eh_virtual)
 void calcula_G(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     /*Cálculo dos ângulos γ(gama)  β(beta) ψ (psi)*/
     double ang_beta = atan((t->barras[7]-t->barras[9])/t->barras[2]);
     double ang_gama = atan(t->barras[3]/t->barras[9]);
     double ang_psi  = atan(t->barras[2]/t->barras[9]);
 
-    switch (tipo_trelica)
+    switch (t->tipo)
     {
     case 1:
     case 3:
@@ -246,7 +239,6 @@ void calcula_G(trelica* t,int eh_virtual)
 void calcula_C(trelica* t,int eh_virtual)
 {
     config(t,eh_virtual);
-    int tipo_trelica=t->tipo;
 
     /*Cálculo dos ângulos ω(omega) φ(phi) δ(delta) μ(mi)*/
     double ang_omega = atan(t->barras[5]/t->barras[1]);
@@ -275,8 +267,8 @@ void calcula_deslocamento(trelica* t)
     double deslocamento=0.0;
     double E = t->E;
     for(int i=0;i<NUM_BARRAS;i++)
-    {
-        deslocamento+=(t->FN[i]*(t->VFN[i])*(t->barras[i])/E*(t->A[i]));
+    {    
+        deslocamento+=((t->FN[i]*(t->VFN[i])*(t->barras[i]))/(E*(t->A[i])));
     }
     t->desloc_C=deslocamento;
 }
@@ -284,8 +276,10 @@ void calcula_deslocamento(trelica* t)
 void calcula_trelica(trelica* t)
 {
     /*A função realiza o cálculo das forças normais,
-     forças virtuais, deslocamento e tipo*/
+     forças virtuais, deslocamento,tipo (caso 1-7) e
+     a constante E do material*/
     t->tipo = calcula_tipo_trelica(t);
+    t->E = 2e8;
     
     calcula_reacoes(t,0);
     calcula_A(t,0);
@@ -321,7 +315,6 @@ int main(int argc, char const *argv[])
     t.barras[2] = 2;
     t.barras[3] = 2;
 
-    t.E = 2e8;
 
     calcula_comprimento_barras(t.barras);
 
@@ -342,6 +335,8 @@ int main(int argc, char const *argv[])
     for(int i=0;i<NUM_BARRAS;i++){
         printf("VFN[%d]: %.4f\n",i+1,t.VFN[i]);
     }
+
+    printf("Deslocamento: %E\n",t.desloc_C);
 
     printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
     printf("VRAx : %.4f VRAy: %.4f VREy: %.4f",t.VRAx,t.VRAy,t.VREy);
