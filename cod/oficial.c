@@ -6,6 +6,7 @@
 #define NUM_FORCAS_CARREG 5
 #define EPSILON 1e-5
 #define PI 3.1415926535897932384626
+#define NUM_CASOS_TESTE 8
 
 /*Variáveis globais utilizadas nos 
 cálculos de Normal na Barra(Real e Virtual)*/
@@ -28,6 +29,8 @@ typedef struct
     double VFN[NUM_BARRAS];
     /*Áreas da seção das barras (m²)*/
     double A[NUM_BARRAS];
+    /*Deltas parciais do cálculo do deslocamento de cada barra*/
+    double DY[NUM_BARRAS];
     /*Reações nos pontos de apoio 
     dispostos nos nós A e E (kN) */
     double RAx,RAy,REy;
@@ -48,6 +51,8 @@ typedef struct
     7: L[7] > L[5] and L[7] < L[9] */
     int tipo;
 } trelica;
+
+trelica casos_de_teste[NUM_CASOS_TESTE];
 
 int igual(double a, double b) {
     return fabs(a - b) < EPSILON;
@@ -265,10 +270,13 @@ void calcula_comprimento_barras(double* barras)
 void calcula_deslocamento(trelica* t)
 {
     double deslocamento=0.0;
+    double delta_parcial;
     double E = t->E;
     for(int i=0;i<NUM_BARRAS;i++)
-    {    
-        deslocamento+=((t->FN[i]*(t->VFN[i])*(t->barras[i]))/(E*(t->A[i])));
+    {
+        delta_parcial=(t->FN[i]*(t->VFN[i])*(t->barras[i]))/(E*(t->A[i])); 
+        deslocamento+=delta_parcial;
+        t->DY[i]=delta_parcial;
     }
     t->desloc_C=deslocamento;
 }
@@ -302,42 +310,93 @@ void calcula_trelica(trelica* t)
     calcula_deslocamento(t);
 }
 
+void inicializa_casos_de_teste()
+{
+    for(int i=0;i<7;i++)
+    {
+        for(int j=0;j<4;j++)
+        {
+            casos_de_teste[i].barras[j] = 2;
+        }
+    }
+    /*Caso 1*/
+    casos_de_teste[0].barras[5]=1;
+    casos_de_teste[0].barras[7]=2;
+    casos_de_teste[0].barras[9]=1;
+
+    /*Caso 2*/
+    casos_de_teste[1].barras[5]=1;
+    casos_de_teste[1].barras[7]=1;
+    casos_de_teste[1].barras[9]=1;
+
+    /*Caso 3*/
+    casos_de_teste[2].barras[5]=1;
+    casos_de_teste[2].barras[7]=1;
+    casos_de_teste[2].barras[9]=0.5;
+
+    /*Caso 4*/
+    casos_de_teste[3].barras[5]=1;
+    casos_de_teste[3].barras[7]=2;
+    casos_de_teste[3].barras[9]=2;
+
+    /*Caso 5*/
+    casos_de_teste[4].barras[5]=1;
+    casos_de_teste[4].barras[7]=0.5;
+    casos_de_teste[4].barras[9]=1;
+
+    /*Caso 6*/
+    casos_de_teste[5].barras[5]=2;
+    casos_de_teste[5].barras[7]=1;
+    casos_de_teste[5].barras[9]=0.5;
+
+    /*Caso 7*/
+    casos_de_teste[6].barras[5]=0.5;
+    casos_de_teste[6].barras[7]=1;
+    casos_de_teste[6].barras[9]=2;
+
+    /*Caso 8 (Vai ser um caso 5 com as barras horizontais 2 3 7 2)*/
+    casos_de_teste[7].barras[5]=1;
+    casos_de_teste[7].barras[7]=0.5;
+    casos_de_teste[7].barras[9]=1;
+
+    casos_de_teste[7].barras[0]=2;
+    casos_de_teste[7].barras[1]=3;
+    casos_de_teste[7].barras[2]=7;
+    casos_de_teste[7].barras[3]=2;
+
+    for(int i=0;i<NUM_CASOS_TESTE;i++)
+    {
+        for(int j=0;j<NUM_BARRAS;j++)
+        {
+            for(int k=0;k<NUM_CASOS_TESTE;k++)
+            {
+                casos_de_teste[i].F[k] = 10;
+            }
+            casos_de_teste[i].A[j] = 5e-4;
+        }
+    }
+
+
+    for(int i=0;i<NUM_CASOS_TESTE;i++)
+    {
+        calcula_comprimento_barras((double*)&casos_de_teste[i].barras);
+        calcula_trelica(&casos_de_teste[i]);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
-    trelica t;
-    /*5, 7, 9*/
-    t.barras[5]= 1;
-    t.barras[7]= 2;
-    t.barras[9]= 1;
-    /*0, 1, 2, 3*/
-    t.barras[0] = 2;
-    t.barras[1] = 2;
-    t.barras[2] = 2;
-    t.barras[3] = 2;
-
-
-    calcula_comprimento_barras(t.barras);
-
-    for(int i=0;i<NUM_FORCAS_CARREG;i++){
-        t.F[i]=10;
-    }
-
-    for(int i=0;i<NUM_BARRAS;i++)
+    inicializa_casos_de_teste();
+    printf("\n=== Casos de teste ======\n");
+    for(int i=0;i<NUM_CASOS_TESTE;i++)
     {
-        t.A[i]=5e-4;
-    }
-
-    calcula_trelica(&t);
-
-    for(int i=0;i<NUM_BARRAS;i++){
-        printf("FN[%d]: %.4f\n",i+1,t.FN[i]);
-    }
-    for(int i=0;i<NUM_BARRAS;i++){
-        printf("VFN[%d]: %.4f\n",i+1,t.VFN[i]);
-    }
-
-    printf("Deslocamento: %E\n",t.desloc_C);
-
-    printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
-    printf("VRAx : %.4f VRAy: %.4f VREy: %.4f",t.VRAx,t.VRAy,t.VREy);
+        printf("## Caso de teste [%d]##\n",i);
+        printf("Barra L(m)  N(kN)     n(kN)   Delta (m)\n");
+        for(int j=0;j<NUM_BARRAS;j++)
+        {
+            printf("%2.d  %6.3f %7.3f  %7.3f   %7.2E\n",j+1,casos_de_teste[i].barras[j],casos_de_teste[i].FN[j],casos_de_teste[i].VFN[j],casos_de_teste[i].DY[j]);
+        }
+        printf("Deslocamento Final: %E\n",casos_de_teste[i].desloc_C);
+        printf("\n\n");
+    }   
 }
