@@ -7,6 +7,12 @@
 #define EPSILON 1e-5
 #define PI 3.1415926535897932384626
 
+/*Variáveis globais utilizadas nos 
+cálculos de Normal na Barra(Real e Virtual)*/
+double* RAx,*RAy,*REy;
+double* F,*FN;
+int VF_C;
+
 typedef struct 
 {
     /*Comprimento das barras (m)*/
@@ -20,12 +26,27 @@ typedef struct
     (aplicação da carga unitária) 
     normais nas barras (kN)*/
     double VFN[NUM_BARRAS];
+    /*Áreas da seção das barras*/
+    double A[NUM_BARRAS];
     /*Reações nos pontos de apoio 
     dispostos nos nós A e E (kN) */
     double RAx,RAy,REy;
     /*Reações virtuais nos pontos de apoio 
     dispostos nos nós A e E (kN) */
     double VRAx,VRAy,VREy;
+    /*Deslocamento vertical no Ponto C*/
+    double desloc_C;
+    /*Tipo de material*/
+    double E;
+    /*Treliça tem um tipo
+    1: L[7] > L[5] and L[7] > L[9]
+    2: L[7] = L[5] and L[7] = L[9]
+    3: L[7] = L[5] and L[7] > L[9]
+    4: L[7] > L[5] and L[7] = L[9]
+    5: L[7] < L[5] and L[7] < L[9]
+    6: L[7] < L[5] and L[7] > L[9]
+    7: L[7] > L[5] and L[7] < L[9] */
+    int tipo;
 } trelica;
 
 int igual(double a, double b) {
@@ -71,6 +92,12 @@ void real_virtual_config(trelica* t,int eh_virtual,double** F,
     *FN  = (eh_virtual) ? t->VFN : t->FN;
 }
 
+void config(trelica* t,int eh_virtual)
+{
+    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+}
+
+
 double somat_forcas(double* F,int inicio,int fim)
 {
     double sf = 0;
@@ -94,11 +121,7 @@ double somat_barras(double* barras,int inicio,int fim)
 void calcula_reacoes(trelica* t,int eh_virtual)
 {
 
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
 
     *RAx = 0.0; /*Não existem forças horizontais atuantes*/
     double numerador = VF_C*somat_barras(t->barras,0,1)+ F[1]*t->barras[0] + F[2]*somat_barras(t->barras,0,1)+F[3]*somat_barras(t->barras,0,2)+F[4]*somat_barras(t->barras,0,3);
@@ -107,39 +130,30 @@ void calcula_reacoes(trelica* t,int eh_virtual)
     *RAy = VF_C + somat_forcas(F,0,4) - (*REy);
 }
 
-void calcula_A(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_A(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     double ang_alpha = atan(t->barras[5]/t->barras[0]);
     FN[4] = (F[0] - (*RAy) )/sin(ang_alpha);
     FN[0] = -(*RAx) - FN[4]*cos(ang_alpha);
 }
 
-void calcula_B(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_B(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     FN[1] = FN[0];
     FN[5] = 0;
 }
 
-void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_F(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-    int eh_caso2_3=0;
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
     /*β = ArcTan[l[1] / l[6]] // N*/
     double ang_beta=atan(t->barras[0]/t->barras[5]);
     /*γ = ArcTan[l[2] / l[6]] // N*/
@@ -171,49 +185,36 @@ void calcula_F(trelica* t,int eh_virtual,int tipo_trelica)
     }
 }
 
-void calcula_H(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_H(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
-
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
 }
 
-void calcula_E(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_E(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     double ang_alpha = atan(t->barras[9]/t->barras[3]);
     FN[10]=(F[4]-(*REy))/sin(ang_alpha);
     FN[3]=-FN[10]*cos(ang_alpha);
 }
 
-void calcula_D(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_D(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     FN[9] = 0;
     FN[2] = FN[3];
 }
 
-void calcula_G(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_G(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     /*Cálculo dos ângulos γ(gama)  β(beta) ψ (psi)*/
     double ang_beta = atan((t->barras[7]-t->barras[9])/t->barras[2]);
@@ -242,13 +243,10 @@ void calcula_G(trelica* t,int eh_virtual,int tipo_trelica)
     FN[12] = (FN[10]*sin(ang_gama) -FN[8]*sin(ang_psi))/cos(ang_beta);
 }
 
-void calcula_C(trelica* t,int eh_virtual,int tipo_trelica)
+void calcula_C(trelica* t,int eh_virtual)
 {
-    double* RAx,*RAy,*REy;
-    double* F,*FN;
-    int VF_C;
-
-    real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
+    config(t,eh_virtual);
+    int tipo_trelica=t->tipo;
 
     /*Cálculo dos ângulos ω(omega) φ(phi) δ(delta) μ(mi)*/
     double ang_omega = atan(t->barras[5]/t->barras[1]);
@@ -272,18 +270,58 @@ void calcula_comprimento_barras(double* barras)
     barras[10] = sqrt(pow(barras[9],2)+pow(barras[3],2));
 }
 
+void calcula_deslocamento(trelica* t)
+{
+    double deslocamento=0.0;
+    double E = t->E;
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        deslocamento+=(t->FN[i]*(t->VFN[i])*(t->barras[i])/E*(t->A[i]));
+    }
+    t->desloc_C=deslocamento;
+}
+
+void calcula_trelica(trelica* t)
+{
+    /*A função realiza o cálculo das forças normais,
+     forças virtuais, deslocamento e tipo*/
+    t->tipo = calcula_tipo_trelica(t);
+    
+    calcula_reacoes(t,0);
+    calcula_A(t,0);
+    calcula_B(t,0);
+    calcula_F(t,0);
+    calcula_E(t,0);
+    calcula_D(t,0);
+    calcula_G(t,0);
+    calcula_C(t,0);
+
+    calcula_reacoes(t,1);
+    calcula_A(t,1);
+    calcula_B(t,1);
+    calcula_F(t,1);
+    calcula_E(t,1);
+    calcula_D(t,1);
+    calcula_G(t,1);
+    calcula_C(t,1);
+
+    calcula_deslocamento(t);
+}
+
 int main(int argc, char const *argv[])
 {
     trelica t;
     /*5, 7, 9*/
-    t.barras[5]= 0.5;
-    t.barras[7]= 1;
-    t.barras[9]= 2;
+    t.barras[5]= 1;
+    t.barras[7]= 2;
+    t.barras[9]= 1;
     /*0, 1, 2, 3*/
     t.barras[0] = 2;
     t.barras[1] = 2;
     t.barras[2] = 2;
     t.barras[3] = 2;
+
+    t.E = 2e8;
 
     calcula_comprimento_barras(t.barras);
 
@@ -291,24 +329,20 @@ int main(int argc, char const *argv[])
         t.F[i]=10;
     }
 
-    int tipo = calcula_tipo_trelica(&t);
-    printf("Tipo de treliça: %d\n",tipo);
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        t.A[i]=5e-4;
+    }
 
-    calcula_reacoes(&t,0);
-    calcula_A(&t,0,tipo);
-    calcula_B(&t,0,tipo);
-    calcula_F(&t,0,tipo);
-    calcula_E(&t,0,tipo);
-    calcula_D(&t,0,tipo);
-    calcula_G(&t,0,tipo);
-    calcula_C(&t,0,tipo);
-
+    calcula_trelica(&t);
 
     for(int i=0;i<NUM_BARRAS;i++){
         printf("FN[%d]: %.4f\n",i+1,t.FN[i]);
     }
+    for(int i=0;i<NUM_BARRAS;i++){
+        printf("VFN[%d]: %.4f\n",i+1,t.VFN[i]);
+    }
 
-    calcula_reacoes(&t,0);
     printf("RAx : %.4f RAy: %.4f REy: %.4f\n",t.RAx,t.RAy,t.REy);
     printf("VRAx : %.4f VRAy: %.4f VREy: %.4f",t.VRAx,t.VRAy,t.VREy);
 }
