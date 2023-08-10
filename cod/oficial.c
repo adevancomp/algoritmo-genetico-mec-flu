@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "trelica.h"
+#include "AG.h"
 
-extern trelica casos_de_teste[NUM_CASOS_TESTE];;
+extern trelica casos_de_teste[NUM_CASOS_TESTE];
 
 int main(int argc, char const *argv[])
 {
@@ -17,5 +19,14 @@ int main(int argc, char const *argv[])
         }
         printf("Deslocamento Final: %.4f mm\n",casos_de_teste[i].desloc_C);
         printf("\n\n");
-    }   
+    }
+    printf("Antes da ordenação:\n");
+    for(int i=0;i<NUM_CASOS_TESTE;i++){
+        printf("Treliça %d deslocamento:%.4f\n",i,casos_de_teste[i].desloc_C);
+    }
+    qsort(casos_de_teste,NUM_CASOS_TESTE,sizeof(trelica),compare);
+    printf("Depois da ordenação:\n");
+    for(int i=0;i<NUM_CASOS_TESTE;i++){
+        printf("Treliça %d deslocamento:%.4f\n",i,casos_de_teste[i].desloc_C);
+    } 
 }
