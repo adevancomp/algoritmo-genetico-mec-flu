@@ -230,7 +230,7 @@ void calcula_deslocamento(trelica* t)
     double E = t->E;
     for(int i=0;i<NUM_BARRAS;i++)
     {
-        delta_parcial=(t->FN[i]*(t->VFN[i])*(t->barras[i]))/(E*(t->A[i])); 
+        delta_parcial=(t->FN[i]*(t->VFN[i])*(t->barras[i]))/(E*(t->A[i]))*1000; /*Conversão de m pra mm*/
         deslocamento+=delta_parcial;
         t->DY[i]=delta_parcial;
     }
@@ -336,7 +336,7 @@ void inicializa_casos_de_teste()
 
     for(int i=0;i<NUM_CASOS_TESTE;i++)
     {
-        calcula_comprimento_barras((double*)&casos_de_teste[i].barras);
+        calcula_comprimento_barras((double*)casos_de_teste[i].barras);
         calcula_trelica(&casos_de_teste[i]);
     }
 }

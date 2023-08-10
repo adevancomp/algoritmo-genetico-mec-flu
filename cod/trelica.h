@@ -28,7 +28,7 @@ typedef struct
     /*Reações virtuais nos pontos de apoio 
     dispostos nos nós A e E (kN) */
     double VRAx,VRAy,VREy;
-    /*Deslocamento vertical no Ponto C (m)*/
+    /*Deslocamento vertical no Ponto C (mm)*/
     double desloc_C;
     /*Tipo de material (kN/m²)*/
     double E;

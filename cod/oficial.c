@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
         {
             printf("%2.d  %6.3f %7.3f  %7.3f   %7.2E\n",j+1,casos_de_teste[i].barras[j],casos_de_teste[i].FN[j],casos_de_teste[i].VFN[j],casos_de_teste[i].DY[j]);
         }
-        printf("Deslocamento Final: %E\n",casos_de_teste[i].desloc_C);
+        printf("Deslocamento Final: %.4f mm\n",casos_de_teste[i].desloc_C);
         printf("\n\n");
     }   
 }
