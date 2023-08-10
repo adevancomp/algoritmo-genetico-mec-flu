@@ -2,6 +2,10 @@
 #include "AG.h"
 #include <stdlib.h>
 
+individuo lista_individuos[TAM_POPULACAO];
+individuo melhor_individuo;
+int geracao_atual=0;
+
 int compare(const void* t1,const void* t2)
 {
     /*Como a função qsort do STD lib exibe uma função com esse protótipo
