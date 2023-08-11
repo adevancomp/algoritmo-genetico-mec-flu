@@ -2,6 +2,7 @@
 #define AG_H
     #include "trelica.h"
     #include "string.h"
+    #include <stdlib.h>
 
     /*Quantidade de genes no cromossomo 1 do indivíduo é 7
     porque são 7 barras que variam ao longo do algoritmo 
@@ -35,4 +36,8 @@
     extern int geracao_atual;
 
     int compare(const void* t1,const void*t2);
+    double barra_comprimento_rand(void);
+    double barra_area_rand(void);
+    void inicializa_populacao();
+    void exibir_individuo(individuo* ind1);
 #endif

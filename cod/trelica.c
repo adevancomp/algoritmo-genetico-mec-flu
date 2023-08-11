@@ -32,6 +32,8 @@ int calcula_tipo_trelica(trelica* t)
         tipo=6;
     else if (L7 > L5 && L7 < L9)
         tipo=7;
+    else if (igual(L7,L5) && L7 < L9)
+        tipo=8;
     return tipo;
 }
 
@@ -132,6 +134,7 @@ void calcula_F(trelica* t,int eh_virtual)
         break;
     case 2:
     case 3:
+    case 8:
         /*Calcular de outro jeito FN[11]*/
         FN[11] = FN[4]*sin(ang_beta) - FN[6]*sin(ang_gama);
         break;
@@ -339,4 +342,28 @@ void inicializa_casos_de_teste()
         calcula_comprimento_barras((double*)casos_de_teste[i].barras);
         calcula_trelica(&casos_de_teste[i]);
     }
+}
+
+void constroe_trelica(trelica* t,double* barras,double* areas,double* F)
+{
+    t->barras[5] = barras[0];
+    t->barras[7] = barras[1];
+    t->barras[9] = barras[2];
+
+    t->barras[0] = barras[3];
+    t->barras[1] = barras[4];
+    t->barras[2] = barras[5];
+    t->barras[3] = barras[6];
+
+    calcula_comprimento_barras(t->barras);
+
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        t->A[i] = areas[i];
+    }
+    for(int i=0;i<NUM_FORCAS_CARREG;i++)
+    {
+        t->F[i] = F[i];
+    }
+    calcula_trelica(t);
 }

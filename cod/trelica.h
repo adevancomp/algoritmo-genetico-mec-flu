@@ -33,14 +33,15 @@
         double desloc_C;
         /*Tipo de material (kN/m²)*/
         double E;
-        /*Treliça tem um tipo (de 1 a 7)
+        /*Treliça tem um tipo (de 1 a 8)
         1: L[7] > L[5] and L[7] > L[9]
         2: L[7] = L[5] and L[7] = L[9]
         3: L[7] = L[5] and L[7] > L[9]
         4: L[7] > L[5] and L[7] = L[9]
         5: L[7] < L[5] and L[7] < L[9]
         6: L[7] < L[5] and L[7] > L[9]
-        7: L[7] > L[5] and L[7] < L[9] */
+        7: L[7] > L[5] and L[7] < L[9]
+        8: L[7] = L[5] and L[7] < L[9] */
         int tipo;
     } trelica;
 
@@ -90,4 +91,6 @@
     void calcula_trelica(trelica* t);
 
     void inicializa_casos_de_teste();
+
+    void constroe_trelica(trelica* t,double* barras,double* areas,double* F);
 #endif
