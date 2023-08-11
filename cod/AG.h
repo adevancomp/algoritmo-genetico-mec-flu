@@ -40,4 +40,6 @@
     double barra_area_rand(void);
     void inicializa_populacao();
     void exibir_individuo(individuo* ind1);
+    int compare_individuo(const void* in1,const void* in2);
+    void fitness(individuo* ind);
 #endif
