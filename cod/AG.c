@@ -140,3 +140,62 @@ int mutacao(individuo* ind)
     atualiza_individuo(ind);
     return teve_mutacao;
 }
+
+void crossover(individuo* ind1,individuo* ind2,
+               individuo* filho1,individuo* filho2)
+{
+    /*Função que realiza um corte aleatório nos cromossomos
+    dos pais e cria o cromossomo dos dois filhos*/
+
+    int ponto_de_corte_1 = rand()%TAM_CROMOSSOMO1;/*índice de corte para o cromossomo 1*/
+    for(int i=0;i<ponto_de_corte_1;i++)
+    {
+        /*Filho 1 recebe o cromossomo de 0 até ponto_de_corte do pai 1*/
+        filho1->cromossomo1[i] = ind1->cromossomo1[i];
+        /*Filho 2 recebe o cromossomo de 0 até ponto_de_corte do pai 2*/
+        filho2->cromossomo1[i] = ind2->cromossomo1[i];
+    }
+    for(int i=ponto_de_corte_1;i<TAM_CROMOSSOMO1;i++)
+    {
+        /*Filho 1 recebe o cromossomo de ponto_de_corte até 
+        o fim do cromossomo do pai 2*/
+        filho1->cromossomo1[i] = ind2->cromossomo1[i];
+        /*Filho 2 recebe o cromossomo de ponto_de_corte até
+        o fim do cromossomo do pai 1*/
+        filho2->cromossomo1[i] = ind1->cromossomo1[i];
+    }
+
+    int ponto_de_corte_2 = rand()%TAM_CROMOSSOMO2;/*índice de corte*/
+
+    for(int i=0;i<ponto_de_corte_2;i++)
+    {
+        /*Filho 1 recebe o cromossomo de 0 até ponto_de_corte do pai 1*/
+        filho1->cromossomo2[i] = ind1->cromossomo2[i];
+        /*Filho 2 recebe o cromossomo de 0 até ponto_de_corte do pai 2*/
+        filho2->cromossomo2[i] = ind2->cromossomo2[i];
+    }
+    for(int i=ponto_de_corte_2;i<TAM_CROMOSSOMO2;i++)
+    {
+        /*Filho 1 recebe o cromossomo de ponto_de_corte até 
+        o fim do cromossomo do pai 2*/
+        filho1->cromossomo2[i] = ind2->cromossomo2[i];
+        /*Filho 2 recebe o cromossomo de ponto_de_corte até
+        o fim do cromossomo do pai 1*/
+        filho2->cromossomo2[i] = ind1->cromossomo2[i];
+    }
+
+    /*Agora o indivíduo teve seus cromossomos 1 e 2 alterados*/
+    atualiza_barras(&(filho1->t),filho1->cromossomo1);
+    atualiza_barras(&(filho2->t),filho2->cromossomo1);
+
+    atualiza_areas(&(filho1->t),filho1->cromossomo2);
+    atualiza_areas(&(filho2->t),filho2->cromossomo2);
+
+    atualiza_individuo(filho1);
+    atualiza_individuo(filho2);
+
+    int geracao_filhos = (ind1->geracao > ind2->geracao) ? ind1->geracao : ind2->geracao;
+    geracao_filhos++; /*A geração dos filhos é a próxima geração, ou seja, +1*/
+    filho1->geracao = geracao_filhos;
+    filho2->geracao = geracao_filhos;
+}

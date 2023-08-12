@@ -23,3 +23,59 @@ inicializa_casos_de_teste();
     for(int i=0;i<NUM_CASOS_TESTE;i++){
         printf("Treliça %d deslocamento:%.4f\n",i,casos_de_teste[i].desloc_C);
     }
+
+for(int i=0;i<TAM_POPULACAO;i++){
+        exibir_individuo(&lista_individuos[i]);
+    }
+    for(int i=0;i<TAM_POPULACAO;i++){
+        printf("%.3f  ",lista_individuos[i].nota);
+    }
+    printf("\n\n\n");
+    qsort(lista_individuos,TAM_POPULACAO,sizeof(individuo),compare_individuo);
+    for(int i=0;i<TAM_POPULACAO;i++){
+        printf("%.3f  ",lista_individuos[i].nota);
+    }
+    /*Pega um exemplo, o indivíduo 0*/
+    printf("\nIndivíduo 0 antes da mutação");
+    individuo* ind = &(lista_individuos[0]);
+    exibir_individuo(ind);
+    printf("Agora vou aplicar a mutação\n");
+    printf("Foi aplicado a mutação ? %d\n",mutacao(ind));
+    exibir_individuo(ind);
+
+printf("Indíviduo 1");
+    exibir_individuo(&lista_individuos[0]);
+    printf("Indivíduo 2");
+    exibir_individuo(&lista_individuos[1]);
+    individuo filho1,filho2;
+    double F_novo[] = {10,10,10,10,10};
+    /*Cada indivíduo irá receber:
+    dois cromossomos, nota e 
+    a geração 0, inicialmente*/
+    for(int i=0;i<TAM_CROMOSSOMO1;i++)
+    {
+        filho1.cromossomo1[i]=barra_comprimento_rand();
+        filho2.cromossomo1[i]=barra_comprimento_rand();
+    }
+    for(int i=0;i<TAM_CROMOSSOMO2;i++)
+    {
+        filho1.cromossomo2[i]=barra_area_rand();
+        filho2.cromossomo2[i]=barra_area_rand();
+    }
+    constroe_trelica(&(filho1.t),filho1.cromossomo1,filho1.cromossomo2,F_novo);
+    constroe_trelica(&(filho2.t),filho2.cromossomo1,filho2.cromossomo2,F_novo);
+    fitness(&filho1);
+    fitness(&filho2);
+    crossover(&(lista_individuos[0]),&(lista_individuos[1]),&filho1,&filho2);
+    printf("\n=== Cromossomo 1 ===\n");
+    printf("   Pai 1       Pai 2      Filho 1    Filho 2\n");
+    for(int i=0;i<TAM_CROMOSSOMO1;i++)
+    {
+        printf("%6.2e %6.2e %6.2e %6.2e\n",lista_individuos[0].cromossomo1[i],lista_individuos[1].cromossomo1[i],filho1.cromossomo1[i],filho2.cromossomo1[i]);
+    }
+    printf("\n=== Cromossomo 2 ===\n");
+    printf("   Pai 1       Pai 2      Filho 1    Filho 2\n");
+    for(int i=0;i<TAM_CROMOSSOMO2;i++)
+    {
+        printf("%6.2e %6.2e %6.2e %6.2e\n",lista_individuos[0].cromossomo2[i],lista_individuos[1].cromossomo2[i],filho1.cromossomo2[i],filho2.cromossomo2[i]);
+    }
