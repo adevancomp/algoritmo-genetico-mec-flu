@@ -79,3 +79,27 @@ printf("Indíviduo 1");
     {
         printf("%6.2e %6.2e %6.2e %6.2e\n",lista_individuos[0].cromossomo2[i],lista_individuos[1].cromossomo2[i],filho1.cromossomo2[i],filho2.cromossomo2[i]);
     }
+/*Implementação do método da roleta. o Algoritmo concede fatias relativas 
+    ao fitness de cada indivíduo dentro da população. Ao final, retorna o indice
+    do indivíduo selecionado para a reprodução*/
+    int indice_pai = 0;
+    double soma = soma_avaliacoes();
+    double aptidao_relativa[TAM_POPULACAO];
+    for(int i=0;i<TAM_POPULACAO;i++)
+        aptidao_relativa[i] = lista_individuos[i].nota / soma;
+    double valor_sorteado = ((double)rand() / RAND_MAX);
+
+    printf("Valor sorteado %.5f\n",valor_sorteado);
+
+    if(TAM_POPULACAO == 0){
+        return -1;
+    }
+
+    while( (indice_pai<TAM_POPULACAO) && (valor_sorteado < aptidao_relativa[indice_pai]) ){
+        printf("\n===== Entrou ====== ind atual %d\n",indice_pai);
+        indice_pai++;
+    }
+    
+    indice_pai = (indice_pai == TAM_POPULACAO) ? indice_pai-1 : indice_pai;
+    printf("indice pai %d\n",indice_pai);
+    return indice_pai;

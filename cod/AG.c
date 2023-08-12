@@ -199,3 +199,38 @@ void crossover(individuo* ind1,individuo* ind2,
     filho1->geracao = geracao_filhos;
     filho2->geracao = geracao_filhos;
 }
+
+void copia_individuo(individuo* ind,individuo* indcop)
+{
+    copia_trelica(&(ind->t),&(indcop->t));
+    for(int i=0;i<TAM_CROMOSSOMO1;i++)
+        ind->cromossomo1[i] = indcop->cromossomo1[i];
+    for(int i=0;i<TAM_CROMOSSOMO2;i++)
+        ind->cromossomo2[i] = indcop->cromossomo2[i];
+    ind->nota = indcop->nota;
+    ind->geracao = indcop->geracao;
+}
+
+double soma_avaliacoes(void)
+{
+    double soma=0.0;
+    for(int i=0;i<TAM_POPULACAO;i++)
+    {
+        soma+=lista_individuos[i].nota;
+    }
+    return soma;
+}
+
+int selecao(void)
+{
+    int pai = -1;
+    double valor_sorteado = ((double)rand() / RAND_MAX) * soma_avaliacoes();
+    double soma = 0;
+    int i = 0;
+    while(i<TAM_POPULACAO && soma < valor_sorteado){
+        soma+=lista_individuos[i].nota;
+        pai++;
+        i++;
+    }
+    return pai;
+}

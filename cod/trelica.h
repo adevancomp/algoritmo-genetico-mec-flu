@@ -1,6 +1,6 @@
 #define NUM_BARRAS 13
 #define NUM_FORCAS_CARREG 5
-#define EPSILON 1e-5
+#define EPSILON 1e-6
 #define PI 3.1415926535897932384626
 #define NUM_CASOS_TESTE 8
 
@@ -97,4 +97,6 @@
     void atualiza_barras(trelica* t,double* barras_modificantes);
 
     void atualiza_areas(trelica* t,double* areas_modificantes);
+
+    void copia_trelica(trelica* t1,trelica* tcop);
 #endif

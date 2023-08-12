@@ -46,4 +46,5 @@
     void atualiza_individuo(individuo* ind);
     void crossover(individuo* ind1,individuo* ind2,
                individuo* filho1,individuo* filho2);
+    int selecao(void);
 #endif

@@ -388,3 +388,31 @@ void atualiza_areas(trelica* t,double* areas_modificantes)
         t->A[i] = areas_modificantes[i];
     }
 }
+
+void copia_trelica(trelica* t1,trelica* tcop)
+{
+    /*Faz a copia das informações de tcop em t1*/
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        t1->barras[i] = tcop->barras[i];
+        t1->FN[i] = tcop->FN[i];
+        t1->VFN[i] = tcop->VFN[i];
+        t1->A[i] = tcop->A[i];
+        t1->DY[i] = tcop->DY[i];
+    }
+        
+    for(int i=0;i<NUM_FORCAS_CARREG;i++)
+        t1->F[i] = tcop->F[i];
+
+    t1->RAx = tcop->RAx;
+    t1->RAy = tcop->RAy;
+    t1->REy = tcop->REy;
+
+    t1->VRAx = tcop->VRAx;
+    t1->VRAy = tcop->VRAy;
+    t1->VREy = tcop->VREy;
+    
+    t1->desloc_C = tcop->desloc_C;
+    t1->E = tcop->E;
+    t1->tipo = tcop->tipo;
+}
