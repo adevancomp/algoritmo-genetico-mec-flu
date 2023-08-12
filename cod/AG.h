@@ -17,9 +17,9 @@
     /*Taxa de reprodução 0-0% de reprodução e 1-100% de reprodução*/
     #define TAXA_REPRODUCAO 1.0
     /*Taxa de mutação 0-0% de mutação e 1-100% de mutação*/
-    #define TAXA_MUTACAO 0.5
+    #define TAXA_MUTACAO 0.05
     /*Quantidade de gerações para um determinado AG*/
-    #define QTD_GERACOES 200
+    #define QTD_GERACOES 100
     /*No máximo, um indivíduo fica QTD_MAX_MELHOR vezes seguidas como o melhor em uma rodada*/
     #define QTD_MAX_MELHOR 10
 
