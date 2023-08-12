@@ -17,7 +17,7 @@
     /*Taxa de reprodução 0-0% de reprodução e 1-100% de reprodução*/
     #define TAXA_REPRODUCAO 1.0
     /*Taxa de mutação 0-0% de mutação e 1-100% de mutação*/
-    #define TAXA_MUTACAO 0.05
+    #define TAXA_MUTACAO 0.5
     /*Quantidade de gerações para um determinado AG*/
     #define QTD_GERACOES 200
     /*No máximo, um indivíduo fica QTD_MAX_MELHOR vezes seguidas como o melhor em uma rodada*/
@@ -42,4 +42,6 @@
     void exibir_individuo(individuo* ind1);
     int compare_individuo(const void* in1,const void* in2);
     void fitness(individuo* ind);
+    int mutacao(individuo* ind);
+    void atualiza_individuo(individuo* ind);
 #endif

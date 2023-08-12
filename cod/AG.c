@@ -73,6 +73,16 @@ void inicializa_populacao(){
 void exibir_individuo(individuo* ind1)
 {
     printf("\n=== Indivíduo ===\n");
+    printf("Cromossomo 1:\n");
+    for(int i=0;i<TAM_CROMOSSOMO1;i++)
+    { 
+        printf("|[%2d] %6.2e|\n",i+1,ind1->cromossomo1[i]);
+    }
+    printf("Cromossomo 2:\n");
+    for(int i=0;i<TAM_CROMOSSOMO2;i++)
+    {
+        printf("|[%2d] %6.2e|\n",i+1,ind1->cromossomo2[i]);
+    }
     printf("Nota :%7.3f Geração:%d\n",ind1->nota,ind1->geracao);
     printf("Barra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
     for(int j=0;j<NUM_BARRAS;j++)
@@ -96,10 +106,16 @@ int compare_individuo(const void* in1,const void* in2)
     }
 }
 
+void atualiza_individuo(individuo* ind)
+{
+    /*A treliça do indivíduo mudou, agora precisa 
+    adicionar uma nova nota de fitness*/
+    calcula_trelica(&(ind->t));
+    fitness(ind);
+}
+
 int mutacao(individuo* ind)
 {
-    double lista_comprimento_barra[TAM_CROMOSSOMO1];
-    double lista_area_barra[TAM_CROMOSSOMO2];
     int teve_mutacao=0;
     for(int i=0;i<TAM_CROMOSSOMO1;i++)
     {
@@ -108,9 +124,9 @@ int mutacao(individuo* ind)
             teve_mutacao=1;
             ind->cromossomo1[i]=barra_comprimento_rand();
         }
-        lista_comprimento_barra[i]=ind->cromossomo1[i];
     }
-    constroe_trelica(&(ind->t),lista_comprimento_barra,ind->t.A,F_atuais);
+    atualiza_barras(&(ind->t),ind->cromossomo1);
+    
     for(int i=0;i<TAM_CROMOSSOMO2;i++)
     {
         if (((double)rand() / RAND_MAX) < TAXA_MUTACAO)
@@ -118,9 +134,9 @@ int mutacao(individuo* ind)
             teve_mutacao=1;
             ind->cromossomo2[i]=barra_area_rand();
         }
-        lista_area_barra[i]=ind->cromossomo2[i];
     }
-    constroe_trelica(&(ind->t),ind->t.barras,lista_area_barra,F_atuais);
-    fitness(ind);
+    atualiza_areas(&(ind->t),ind->cromossomo2);
+
+    atualiza_individuo(ind);
     return teve_mutacao;
 }

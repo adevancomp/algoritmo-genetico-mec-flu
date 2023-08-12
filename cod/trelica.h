@@ -93,4 +93,8 @@
     void inicializa_casos_de_teste();
 
     void constroe_trelica(trelica* t,double* barras,double* areas,double* F);
+
+    void atualiza_barras(trelica* t,double* barras_modificantes);
+
+    void atualiza_areas(trelica* t,double* areas_modificantes);
 #endif

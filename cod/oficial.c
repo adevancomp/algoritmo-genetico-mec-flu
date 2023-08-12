@@ -22,4 +22,11 @@ int main(int argc, char const *argv[])
     for(int i=0;i<TAM_POPULACAO;i++){
         printf("%.3f  ",lista_individuos[i].nota);
     }
+    /*Pega um exemplo, o indivíduo 0*/
+    printf("\nIndivíduo 0 antes da mutação");
+    individuo* ind = &(lista_individuos[0]);
+    exibir_individuo(ind);
+    printf("Agora vou aplicar a mutação\n");
+    printf("Foi aplicado a mutação ? %d\n",mutacao(ind));
+    exibir_individuo(ind);
 }

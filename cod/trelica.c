@@ -367,3 +367,24 @@ void constroe_trelica(trelica* t,double* barras,double* areas,double* F)
     }
     calcula_trelica(t);
 }
+
+void atualiza_barras(trelica* t,double* barras_modificantes)
+{
+    t->barras[5] = barras_modificantes[0];
+    t->barras[7] = barras_modificantes[1];
+    t->barras[9] = barras_modificantes[2];
+
+    t->barras[0] = barras_modificantes[3];
+    t->barras[1] = barras_modificantes[4];
+    t->barras[2] = barras_modificantes[5];
+    t->barras[3] = barras_modificantes[6];
+    calcula_comprimento_barras(t->barras);
+}
+
+void atualiza_areas(trelica* t,double* areas_modificantes)
+{
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        t->A[i] = areas_modificantes[i];
+    }
+}
