@@ -1,0 +1,93 @@
+Avisos
+
+void calcula_trelica(trelica* t)
+   - Dependências
+        void calcula_comprimento_barras(double* barras);
+        
+
+typedef struct 
+    {
+        
+        double barras[NUM_BARRAS];
+        double F[NUM_FORCAS_CARREG];
+        double FN[NUM_BARRAS];
+        double VFN[NUM_BARRAS];
+        double A[NUM_BARRAS];
+        double DY[NUM_BARRAS];
+        double RAx,RAy,REy;
+        double VRAx,VRAy,VREy;
+        double desloc_C;
+        double E;
+        int tipo;
+    } trelica;
+
+----------------- Teste 1 -----------------
+
+#include "trelica.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char const *argv[])
+{
+    trelica t;
+    double barras[] = {1, 0.5, 1, 2, 3, 7, 2};
+    t.barras[5] = 1;
+    t.barras[7] = 0.5;
+    t.barras[9] = 1;
+
+    t.barras[0] = 2;
+    t.barras[1] = 2;
+    t.barras[2] = 2;
+    t.barras[3] = 2;
+
+    for(int i=0;i<5;i++)
+        t.F[i] = 10;
+    
+    for(int i=0;i<13;i++)
+        t.A[i] = 5e-4;
+    
+    t.E= DEFAULT_E;
+    t.tipo = calcula_tipo_trelica(&t);
+
+    calcula_comprimento_barras(t.barras);
+
+    calcula_trelica(&t);
+
+    printf("Barra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
+    for(int j=0;j<13;j++)
+    {
+        printf("%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",j+1,t.A[j],t.barras[j],t.FN[j],t.VFN[j],t.DY[j]);
+    }
+    printf("Deslocamento Final: %.4f mm\n",t.desloc_C);
+
+    printf("Caso 8\n\n");
+
+    atualiza_barras(&t,barras);
+    calcula_trelica(&t);
+
+    printf("Barra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
+    for(int j=0;j<13;j++)
+    {
+        printf("%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",j+1,t.A[j],t.barras[j],t.FN[j],t.VFN[j],t.DY[j]);
+    }
+    printf("Deslocamento Final: %.4f mm\n",t.desloc_C); 
+    return 0;
+}
+
+----------------- Teste 1 -----------------
+
+
+----------------- Teste 2 -----------------
+
+srand(time(NULL));
+    inicia_populacao();
+    for(int i=0;i<TAM_POPULACAO;i++)
+        exibe_individuo(lista_individuos+i);
+    /*void qsort(void* buf,size_t num, size_t size,int(*compare)(const void*,const void*))
+  exemplo : qsort(num,10,sizeof(int),comp)*/
+    qsort(lista_individuos,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+    printf("Ordenado\n");
+    for(int i=0;i<TAM_POPULACAO;i++)
+        printf("%d Nota:%f\n",i,lista_individuos[i].nota);
+
+----------------- Teste 2 -----------------

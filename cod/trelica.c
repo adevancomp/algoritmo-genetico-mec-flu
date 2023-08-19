@@ -8,14 +8,29 @@ cálculos de Normal na Barra(Real e Virtual)*/
 double* RAx,*RAy,*REy;
 double* F,*FN;
 int VF_C;
-trelica casos_de_teste[NUM_CASOS_TESTE];
 
 int igual(double a, double b) {
+    /*Comparador de igual para 
+    o deslocamento e ordenação de treliças*/
     return fabs(a - b) < EPSILON;
+}
+
+double barra_comprimento_rand(void)
+{
+    double comprimentos_possiveis[] = {1,2,0.5};
+    return comprimentos_possiveis[(rand()%3)];
+}
+
+double barra_area_rand(void)
+{
+    double areas_possiveis[] = {5e-4,6e-4,1e-4};
+    return areas_possiveis[(rand()%3)];
 }
 
 int calcula_tipo_trelica(trelica* t)
 {
+    /*Cálculo o tipo da treliça com base na disposição
+    das barras 7,5 e 9 entre si*/
     int L7=t->barras[7],L5=t->barras[5],L9=t->barras[9];
     int tipo=0;
     if(L7 > L5 && L7> L9)
@@ -34,9 +49,9 @@ int calcula_tipo_trelica(trelica* t)
         tipo=7;
     else if (igual(L7,L5) && L7 < L9)
         tipo=8;
+    t->tipo = tipo;
     return tipo;
 }
-
 
 void real_virtual_config(trelica* t,int eh_virtual,double** F,
                          int* VF_C,double** RAx,double** RAy,
@@ -49,20 +64,22 @@ void real_virtual_config(trelica* t,int eh_virtual,double** F,
     *F = (eh_virtual) ? 
         (double*)calloc(NUM_FORCAS_CARREG, sizeof(double)) : (double*)t->F;
     *VF_C = (eh_virtual) ? 1 : 0;
-    *RAx = (t) ? &(t->VRAx) : &(t->RAx);
-    *RAy = (eh_virtual) ? &(t->VRAy) : &(t->RAy);
-    *REy = (eh_virtual) ? &(t->VREy) : &(t->REy);
-    *FN  = (eh_virtual) ? t->VFN : t->FN;
+    *RAx  = (eh_virtual) ? &(t->VRAx) : &(t->RAx);
+    *RAy  = (eh_virtual) ? &(t->VRAy) : &(t->RAy);
+    *REy  = (eh_virtual) ? &(t->VREy) : &(t->REy);
+    *FN   = (eh_virtual) ? t->VFN : t->FN;
 }
 
 void config(trelica* t,int eh_virtual)
 {
+    /*Configura as variáveis utilizadas*/
     real_virtual_config(t,eh_virtual,&F,&VF_C,&RAx,&RAy,&REy,&FN);
 }
 
-
 double somat_forcas(double* F,int inicio,int fim)
 {
+    /*Realiza a soma das forças de 
+    carregamento de 'inicio' e  'fim' */
     double sf = 0;
     for(int i=inicio;i<=fim;i++)
     {
@@ -73,6 +90,8 @@ double somat_forcas(double* F,int inicio,int fim)
 
 double somat_barras(double* barras,int inicio,int fim)
 {
+    /*Realiza a soma dos comprimentos de 
+    barras de 'inicio' e  'fim'*/
     double s=0.0;
     for(int i=inicio;i<=fim;i++)
     {
@@ -83,11 +102,17 @@ double somat_barras(double* barras,int inicio,int fim)
 
 void calcula_reacoes(trelica* t,int eh_virtual)
 {
-
+    /*Calcula os valores de RAx RAy e REy nos pontos de apoio A e E
+    da treliça, tanto para carregamento virtual quanto pra real*/
     config(t,eh_virtual);
 
     *RAx = 0.0; /*Não existem forças horizontais atuantes*/
-    double numerador = VF_C*somat_barras(t->barras,0,1)+ F[1]*t->barras[0] + F[2]*somat_barras(t->barras,0,1)+F[3]*somat_barras(t->barras,0,2)+F[4]*somat_barras(t->barras,0,3);
+    double numerador = VF_C*somat_barras(t->barras,0,1)
+                      +F[1]*t->barras[0] 
+                      + F[2]*somat_barras(t->barras,0,1)
+                      +F[3]*somat_barras(t->barras,0,2)
+                      +F[4]*somat_barras(t->barras,0,3);
+
     double denominador =somat_barras(t->barras,0,3);
     *REy = numerador/denominador;
     *RAy = VF_C + somat_forcas(F,0,4) - (*REy);
@@ -144,12 +169,6 @@ void calcula_F(trelica* t,int eh_virtual)
     default:
         break;
     }
-}
-
-void calcula_H(trelica* t,int eh_virtual)
-{
-    config(t,eh_virtual);
-
 }
 
 void calcula_E(trelica* t,int eh_virtual)
@@ -214,16 +233,16 @@ void calcula_C(trelica* t,int eh_virtual)
 
 }
 
-void calcula_comprimento_barras(double* barras)
+void metodo_dos_nos(trelica* t,int eh_virtual)
 {
-    /*Comprimentos que variam : 5, 7, 9   (vertical)
-                                0, 1, 2, 3(horizontal)*/
-    barras[4]  = sqrt(pow(barras[0],2)+pow(barras[5],2));
-    barras[6]  = sqrt(pow(barras[1],2)+pow(barras[5],2));
-    barras[11] = sqrt(pow(barras[1],2)+pow(barras[7]-barras[5],2));
-    barras[12] = sqrt(pow(barras[2],2)+pow(barras[7]-barras[9],2));
-    barras[8]  = sqrt(pow(barras[2],2)+pow(barras[9],2));
-    barras[10] = sqrt(pow(barras[9],2)+pow(barras[3],2));
+    calcula_reacoes(t,eh_virtual);
+    calcula_A(t,eh_virtual);
+    calcula_B(t,eh_virtual);
+    calcula_F(t,eh_virtual);
+    calcula_E(t,eh_virtual);
+    calcula_D(t,eh_virtual);
+    calcula_G(t,eh_virtual);
+    calcula_C(t,eh_virtual);
 }
 
 void calcula_deslocamento(trelica* t)
@@ -243,176 +262,77 @@ void calcula_deslocamento(trelica* t)
 void calcula_trelica(trelica* t)
 {
     /*A função realiza o cálculo das forças normais,
-     forças virtuais, deslocamento,tipo (caso 1-7) e
-     a constante E do material*/
-    t->tipo = calcula_tipo_trelica(t);
-    t->E = 2e8;
+     forças virtuais, deslocamento*/
     
-    calcula_reacoes(t,0);
-    calcula_A(t,0);
-    calcula_B(t,0);
-    calcula_F(t,0);
-    calcula_E(t,0);
-    calcula_D(t,0);
-    calcula_G(t,0);
-    calcula_C(t,0);
+    metodo_dos_nos(t,0);/*Calcula as reações e forças normais REAIS*/
+    metodo_dos_nos(t,1);/*Calcula as reações e forças normais VIRTUAIS*/
 
-    calcula_reacoes(t,1);
-    calcula_A(t,1);
-    calcula_B(t,1);
-    calcula_F(t,1);
-    calcula_E(t,1);
-    calcula_D(t,1);
-    calcula_G(t,1);
-    calcula_C(t,1);
-
-    calcula_deslocamento(t);
+    calcula_deslocamento(t);/*Calcula o deslocamento em mm*/
 }
 
-
-void inicializa_casos_de_teste()
+void calcula_comprimento_barras(double* barras)
 {
-    for(int i=0;i<7;i++)
-    {
-        for(int j=0;j<4;j++)
-        {
-            casos_de_teste[i].barras[j] = 2;
-        }
-    }
-    /*Caso 1*/
-    casos_de_teste[0].barras[5]=1;
-    casos_de_teste[0].barras[7]=2;
-    casos_de_teste[0].barras[9]=1;
-
-    /*Caso 2*/
-    casos_de_teste[1].barras[5]=1;
-    casos_de_teste[1].barras[7]=1;
-    casos_de_teste[1].barras[9]=1;
-
-    /*Caso 3*/
-    casos_de_teste[2].barras[5]=1;
-    casos_de_teste[2].barras[7]=1;
-    casos_de_teste[2].barras[9]=0.5;
-
-    /*Caso 4*/
-    casos_de_teste[3].barras[5]=1;
-    casos_de_teste[3].barras[7]=2;
-    casos_de_teste[3].barras[9]=2;
-
-    /*Caso 5*/
-    casos_de_teste[4].barras[5]=1;
-    casos_de_teste[4].barras[7]=0.5;
-    casos_de_teste[4].barras[9]=1;
-
-    /*Caso 6*/
-    casos_de_teste[5].barras[5]=2;
-    casos_de_teste[5].barras[7]=1;
-    casos_de_teste[5].barras[9]=0.5;
-
-    /*Caso 7*/
-    casos_de_teste[6].barras[5]=0.5;
-    casos_de_teste[6].barras[7]=1;
-    casos_de_teste[6].barras[9]=2;
-
-    /*Caso 8 (Vai ser um caso 5 com as barras horizontais 2 3 7 2)*/
-    casos_de_teste[7].barras[5]=1;
-    casos_de_teste[7].barras[7]=0.5;
-    casos_de_teste[7].barras[9]=1;
-
-    casos_de_teste[7].barras[0]=2;
-    casos_de_teste[7].barras[1]=3;
-    casos_de_teste[7].barras[2]=7;
-    casos_de_teste[7].barras[3]=2;
-
-    for(int i=0;i<NUM_CASOS_TESTE;i++)
-    {
-        for(int j=0;j<NUM_BARRAS;j++)
-        {
-            for(int k=0;k<NUM_CASOS_TESTE;k++)
-            {
-                casos_de_teste[i].F[k] = 10;
-            }
-            casos_de_teste[i].A[j] = 5e-4;
-        }
-    }
-
-
-    for(int i=0;i<NUM_CASOS_TESTE;i++)
-    {
-        calcula_comprimento_barras((double*)casos_de_teste[i].barras);
-        calcula_trelica(&casos_de_teste[i]);
-    }
+    /*Comprimentos que variam : 5, 7, 9   (vertical)
+                                0, 1, 2, 3(horizontal)*/
+    barras[4]  = sqrt(pow(barras[0],2)+pow(barras[5],2));
+    barras[6]  = sqrt(pow(barras[1],2)+pow(barras[5],2));
+    barras[11] = sqrt(pow(barras[1],2)+pow(barras[7]-barras[5],2));
+    barras[12] = sqrt(pow(barras[2],2)+pow(barras[7]-barras[9],2));
+    barras[8]  = sqrt(pow(barras[2],2)+pow(barras[9],2));
+    barras[10] = sqrt(pow(barras[9],2)+pow(barras[3],2));
 }
 
-void constroe_trelica(trelica* t,double* barras,double* areas,double* F)
+void atualiza_barras(trelica* t, double* barras_mod)
 {
-    t->barras[5] = barras[0];
-    t->barras[7] = barras[1];
-    t->barras[9] = barras[2];
-
-    t->barras[0] = barras[3];
-    t->barras[1] = barras[4];
-    t->barras[2] = barras[5];
-    t->barras[3] = barras[6];
-
-    calcula_comprimento_barras(t->barras);
-
-    for(int i=0;i<NUM_BARRAS;i++)
-    {
-        t->A[i] = areas[i];
-    }
-    for(int i=0;i<NUM_FORCAS_CARREG;i++)
-    {
-        t->F[i] = F[i];
-    }
-    calcula_trelica(t);
-}
-
-void atualiza_barras(trelica* t,double* barras_modificantes)
-{
-    t->barras[5] = barras_modificantes[0];
-    t->barras[7] = barras_modificantes[1];
-    t->barras[9] = barras_modificantes[2];
-
-    t->barras[0] = barras_modificantes[3];
-    t->barras[1] = barras_modificantes[4];
-    t->barras[2] = barras_modificantes[5];
-    t->barras[3] = barras_modificantes[6];
-    calcula_comprimento_barras(t->barras);
-}
-
-void atualiza_areas(trelica* t,double* areas_modificantes)
-{
-    for(int i=0;i<NUM_BARRAS;i++)
-    {
-        t->A[i] = areas_modificantes[i];
-    }
-}
-
-void copia_trelica(trelica* t1,trelica* tcop)
-{
-    /*Faz a copia das informações de tcop em t1*/
-    for(int i=0;i<NUM_BARRAS;i++)
-    {
-        t1->barras[i] = tcop->barras[i];
-        t1->FN[i] = tcop->FN[i];
-        t1->VFN[i] = tcop->VFN[i];
-        t1->A[i] = tcop->A[i];
-        t1->DY[i] = tcop->DY[i];
-    }
-        
-    for(int i=0;i<NUM_FORCAS_CARREG;i++)
-        t1->F[i] = tcop->F[i];
-
-    t1->RAx = tcop->RAx;
-    t1->RAy = tcop->RAy;
-    t1->REy = tcop->REy;
-
-    t1->VRAx = tcop->VRAx;
-    t1->VRAy = tcop->VRAy;
-    t1->VREy = tcop->VREy;
+    /*função que recebe barras_mod construida da seguinte forma
+                  0  1  2     3  4  5  6   TAM = 7
+    barras_mod = [5, 7, 9,    0, 1, 2, 3] */
     
-    t1->desloc_C = tcop->desloc_C;
-    t1->E = tcop->E;
-    t1->tipo = tcop->tipo;
+    t->barras[5] = barras_mod[0];
+    t->barras[7] = barras_mod[1];
+    t->barras[9] = barras_mod[2];
+
+    t->barras[0] = barras_mod[3];
+    t->barras[1] = barras_mod[4];
+    t->barras[2] = barras_mod[5];
+    t->barras[3] = barras_mod[6];
+    
+    calcula_tipo_trelica(t);
+    calcula_comprimento_barras((double*)t->barras);
+}
+
+double calcula_massa(trelica* t)
+{
+    double massa = 0.0;
+    double inc_massa;
+    for(int i=0;i<NUM_BARRAS;i++){
+        inc_massa = t->M*(t->A[i]*t->barras[i]);
+        massa+=inc_massa;
+    }
+    t->massa = massa;
+    return massa;
+}
+
+trelica* cria_trelica(void)
+{
+    trelica* t = (trelica*)malloc(sizeof(trelica));
+    
+    if(!t){
+        printf("Faltou memória!\n");
+        exit(1);
+    }
+    t->E = DEFAULT_E;
+    t->M = DEFAULT_M;
+    return t;
+}
+
+void exibe_trelica(trelica* t)
+{
+    printf("\nBarra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
+    for(int j=0;j<NUM_BARRAS;j++)
+    {
+        printf("%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",j+1,t->A[j],t->barras[j],t->FN[j],t->VFN[j],t->DY[j]);
+    }
+    printf("Deslocamento Final: %.4f mm\n",t->desloc_C);
+    printf("Massa: %.4f kg\n",t->massa);
 }
