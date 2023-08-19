@@ -82,4 +82,6 @@
     trelica* cria_trelica(void);
     void exibe_trelica(trelica* t);
     double calcula_vao_livre(trelica* t);
+    void copia_trelica(trelica* t1,trelica* tcopiado);
+    
 #endif

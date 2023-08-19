@@ -21,11 +21,11 @@ int func_compara_individuos(const void* ind1,const void* ind2)
       Se ind1 == ind2, devolve zero
       Se ind1  > ind2, devolve maior que zero */
     if(vd_ind1->nota < vd_ind2->nota)
-        return -1;
+        return 1;
     else if (igual_individuo(vd_ind1->nota,vd_ind2->nota))
         return 0;
     else {
-        return 1;
+        return -1;
     }
 }
 /*void qsort(void* buf,size_t num, size_t size,int(*compare)(const void*,const void*))
@@ -34,7 +34,9 @@ int func_compara_individuos(const void* ind1,const void* ind2)
 double fitness(individuo* ind)
 {
     double nota = 1.0/(0.1*ind->t->massa+ind->t->desloc_C);
-    ind->nota = nota;
+    double vao = calcula_vao_livre(ind->t);
+    /*Aplicação de penalidade referente a restrição de o vão mínimo ser de VAO_MINIMO metros*/
+    ind->nota = (vao>VAO_MINIMO || igual_individuo(vao,VAO_MINIMO)) ? nota : nota*0.4;
     return nota;   
 }
 
@@ -72,7 +74,6 @@ void inicia_populacao(void)
     {
         /*Inicializa uma treliça*/
         lista_individuos[i].t = cria_trelica();
-        printf("%p",lista_individuos->t);
         /*Inicializa os cromossomos aleatoriamente*/
         for(int j=0;j<TAM_CROMOSSOMO1;j++)
             lista_individuos[i].cromossomo1[j] = barra_comprimento_rand();
@@ -154,7 +155,6 @@ void crossover(individuo* ind1,individuo* ind2,
         o fim do cromossomo do pai 1*/
         filho2->cromossomo1[i] = ind1->cromossomo1[i];
     }
-
     /*pt2 é o indice de corte no cromossomo 2*/
     int pt2 = rand()%TAM_CROMOSSOMO2;/*numeros de 0 a TAM_CROMOSSOMO2 - 1*/
 
@@ -182,4 +182,15 @@ void crossover(individuo* ind1,individuo* ind2,
     geracao_filhos++; /*A geração dos filhos é a próxima geração, ou seja, +1*/
     filho1->geracao = geracao_filhos;
     filho2->geracao = geracao_filhos;
+}
+
+void copia_individuo(individuo* ind, individuo* ind_copiado)
+{
+    copia_trelica(ind->t,ind_copiado->t);
+    for(int i=0;i<TAM_CROMOSSOMO1;i++)
+        ind->cromossomo1[i] = ind_copiado->cromossomo1[i];
+    for(int i=0;i<TAM_CROMOSSOMO2;i++)
+        ind->cromossomo2[i] = ind_copiado->cromossomo2[i];
+    ind->nota = ind_copiado->nota;
+    ind->geracao = ind_copiado->geracao;
 }

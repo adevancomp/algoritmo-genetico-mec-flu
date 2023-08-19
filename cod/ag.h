@@ -20,6 +20,8 @@
     #define QTD_MAX_MELHOR 5
     /*Imprecisão considerada em fins de comparação*/
     #define EPSILON_AG 1e-9
+    /*Vão livre de minímo de 8 metros que a solução (treliça) precisa ter*/
+    #define VAO_MINIMO 8.0
 
     typedef struct {
         /*Treliça resolvida*/
@@ -50,4 +52,11 @@
     void atualiza_individuo(individuo* ind);
     void exibe_individuo(individuo* ind);
     void inicia_populacao(void);
+    int mutacao(individuo* ind);
+    double soma_avaliacoes(void);
+    int selecao(void);
+    void crossover(individuo* ind1,individuo* ind2,
+               individuo* filho1,individuo* filho2); 
+    void copia_individuo(individuo* ind, individuo* ind_copiado);
+    
 #endif

@@ -343,3 +343,30 @@ double calcula_vao_livre(trelica* t)
     das barras da base 0,1,2,3*/
     return somat_barras(t->barras,0,3);
 }
+
+void copia_trelica(trelica* t1,trelica* tcopiado)
+{
+    for(int i=0;i<NUM_BARRAS;i++){
+        t1->barras[i]  = tcopiado->barras[i];
+        t1->FN[i]      = tcopiado->FN[i];
+        t1->VFN[i]     = tcopiado->VFN[i];
+        t1->A[i]       = tcopiado->A[i];
+        t1->DY[i]      = tcopiado->DY[i];
+    }
+    for(int i=0;i<NUM_FORCAS_CARREG;i++)
+        t1->F[i] = tcopiado->F[i];
+    
+    t1->RAx = tcopiado->RAx;
+    t1->RAy = tcopiado->RAy;
+    t1->REy = tcopiado->REy;
+
+    t1->VRAx = tcopiado->VRAx;
+    t1->VRAy = tcopiado->VRAy;
+    t1->VREy = tcopiado->VREy;
+
+    t1->desloc_C = tcopiado->desloc_C;
+    t1->E = tcopiado->E;
+    t1->M = tcopiado->M;
+    t1->tipo = tcopiado->tipo;
+    t1->massa = tcopiado->massa;
+}

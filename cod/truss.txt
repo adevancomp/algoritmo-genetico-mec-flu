@@ -91,3 +91,97 @@ srand(time(NULL));
         printf("%d Nota:%f\n",i,lista_individuos[i].nota);
 
 ----------------- Teste 2 -----------------
+
+
+----------------- Teste 3 -----------------
+
+srand(time(NULL));
+    inicia_populacao();
+    qsort(lista_individuos,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+    copia_individuo(&melhor_individuo,lista_individuos);/*Copia o primeiro elemento da lista pra variavel melhor_individuo*/
+    for(int i=0;i<QTD_GERACOES;i++)
+    {
+        //double soma_avaliacao = soma_avaliacoes();
+        individuo nova_populacao[TAM_POPULACAO];
+        int cont=0;
+        for(int k=0;k<TAM_POPULACAO;k=k+2)
+        {
+            int indice_pai1 = selecao();
+            int indice_pai2 = selecao();
+
+            individuo filho1,filho2;
+
+            crossover(lista_individuos+indice_pai1,lista_individuos+indice_pai2,&filho1,&filho2);
+            mutacao(&filho1);
+            mutacao(&filho2);
+            nova_populacao[cont]=filho1;
+            cont++;
+            nova_populacao[cont]=filho2;
+            cont++;
+        }
+        /*Substitui a população antiga pela nova*/
+        for(int l=0;l<TAM_POPULACAO;l++)
+            copia_individuo(lista_individuos+l,nova_populacao+l);
+        qsort(nova_populacao,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+        copia_individuo(&melhor_individuo,lista_individuos);
+        printf("geracao:%d melhor:%f\n",i,melhor_individuo.nota);
+    }
+
+----------------- Teste 3 -----------------
+
+
+----------------- Teste 4 -----------------
+
+#include "ag.h"
+#include "trelica.h"
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define HISTORICO_SOLUCOES "historico.txt"
+#define MELHOR_ATUAL "melhor.txt"
+
+extern individuo lista_individuos[TAM_POPULACAO];
+extern individuo melhor_individuo;
+
+int main(int argc, char const *argv[])
+{
+    srand(time(NULL));
+    inicia_populacao();
+    qsort(lista_individuos,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+    copia_individuo(&melhor_individuo,lista_individuos);/*Copia o primeiro elemento da lista pra variavel melhor_individuo*/
+    for(int i=0;i<QTD_GERACOES;i++)
+    {
+        //double soma_avaliacao = soma_avaliacoes();
+        individuo nova_populacao[TAM_POPULACAO];
+        for(int o=0;o<TAM_POPULACAO;i++)
+            nova_populacao[o].t = cria_trelica();
+        int cont=0;
+        for(int k=0;k<TAM_POPULACAO;k=k+2)
+        {
+            int indice_pai1 = selecao();
+            int indice_pai2 = selecao();
+
+            individuo filho1,filho2;
+
+            crossover(lista_individuos+indice_pai1,lista_individuos+indice_pai2,&filho1,&filho2);
+            mutacao(&filho1);
+            mutacao(&filho2);
+            nova_populacao[cont]=filho1;
+            cont++;
+            nova_populacao[cont]=filho2;
+            cont++;
+        }
+        /*Substitui a população antiga pela nova*/
+        for(int l=0;l<TAM_POPULACAO;l++)
+            copia_individuo(lista_individuos+l,nova_populacao+l);
+        qsort(nova_populacao,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+        copia_individuo(&melhor_individuo,lista_individuos);
+        printf("geracao:%d melhor:%f\n",i,melhor_individuo.nota);
+    }
+
+    return 0;
+}
+
+
+----------------- Teste 4 -----------------
