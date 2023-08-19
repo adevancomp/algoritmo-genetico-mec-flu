@@ -17,13 +17,13 @@ int igual(double a, double b) {
 
 double barra_comprimento_rand(void)
 {
-    double comprimentos_possiveis[] = {1,2,0.5};
+    double comprimentos_possiveis[] = {1,2,3};
     return comprimentos_possiveis[(rand()%3)];
 }
 
 double barra_area_rand(void)
 {
-    double areas_possiveis[] = {5e-4,6e-4,1e-4};
+    double areas_possiveis[] = {3e-4,4e-4,5e-4};
     return areas_possiveis[(rand()%3)];
 }
 
@@ -335,4 +335,11 @@ void exibe_trelica(trelica* t)
     }
     printf("Deslocamento Final: %.4f mm\n",t->desloc_C);
     printf("Massa: %.4f kg\n",t->massa);
+}
+
+double calcula_vao_livre(trelica* t)
+{
+    /*O comprimento do vão livre é a soma dos comprimentos
+    das barras da base 0,1,2,3*/
+    return somat_barras(t->barras,0,3);
 }

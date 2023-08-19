@@ -81,4 +81,5 @@
     double calcula_massa(trelica* t);
     trelica* cria_trelica(void);
     void exibe_trelica(trelica* t);
+    double calcula_vao_livre(trelica* t);
 #endif
