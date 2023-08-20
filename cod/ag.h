@@ -6,16 +6,15 @@
     #include <math.h>
     #include <stdio.h>
 
-    /*Quantidade de genes no cromossomo 1 : barras[5,7,9,  0,1,2,3]*/
-    #define TAM_CROMOSSOMO1 7
+    #define TAM_CROMOSSOMO1 3
     /*Quantidade de genes no cromossomo 2: áreas das barras*/
     #define TAM_CROMOSSOMO2 13
     /*Quantidade de indivíduos em uma população*/
-    #define TAM_POPULACAO 1500
+    #define TAM_POPULACAO 2000
     /*Taxa de mutação 0 (0% de mutação) e 1.0 (100% de mutação)*/
     #define TAXA_MUTACAO 0.05
     /*Quantidade de gerações para um determinado AG*/
-    #define QTD_GERACOES 120
+    #define QTD_GERACOES 150
     /*No máximo, um indivíduo fica QTD_MAX_MELHOR vezes seguidas como o melhor em uma rodada*/
     #define QTD_MAX_MELHOR 5
     /*Imprecisão considerada em fins de comparação*/

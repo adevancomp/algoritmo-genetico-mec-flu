@@ -285,19 +285,14 @@ void calcula_comprimento_barras(double* barras)
 
 void atualiza_barras(trelica* t, double* barras_mod)
 {
-    /*função que recebe barras_mod construida da seguinte forma
-                  0  1  2     3  4  5  6   TAM = 7
-    barras_mod = [5, 7, 9,    0, 1, 2, 3] */
+    t->barras[0] = 2;
+    t->barras[1] = 2;
+    t->barras[2] = 2;
+    t->barras[3] = 2;
     
     t->barras[5] = barras_mod[0];
     t->barras[7] = barras_mod[1];
     t->barras[9] = barras_mod[2];
-
-    t->barras[0] = barras_mod[3];
-    t->barras[1] = barras_mod[4];
-    t->barras[2] = barras_mod[5];
-    t->barras[3] = barras_mod[6];
-    
     calcula_tipo_trelica(t);
     calcula_comprimento_barras((double*)t->barras);
 }
