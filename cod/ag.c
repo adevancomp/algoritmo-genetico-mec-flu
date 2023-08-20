@@ -7,7 +7,6 @@
 individuo lista_individuos[TAM_POPULACAO];
 individuo melhor_individuo;
 int geracao_atual=0;
-double F_atuais[] = {10,10,10,10,10};
 
 int igual_individuo(double a, double b) {
     return fabs(a - b) < EPSILON_AG;
@@ -135,46 +134,33 @@ int selecao(void)
 void crossover(individuo* ind1,individuo* ind2,
                individuo* filho1,individuo* filho2)
 {
-    /*Função responsável pelo cruzamento dos indivíduos*/
+    /*Função responsável pelo cruzamento dos indivíduos
+    filho_1 = pai[:ponto_de_corte] + mae[ponto_de_corte:]
+    filho_2 = mae[:ponto_de_corte] + pai[ponto_de_corte:]
+    */
+    int pt1,pt2;
+    
+    pt1 = rand()%TAM_CROMOSSOMO1;
 
-    /*pt1 é o indice de corte no cromossomo 1*/
-    int pt1 = rand()%TAM_CROMOSSOMO1; /*numeros de 0 a TAM_CROMOSSOMO1 - 1*/
-    for(int i=0;i<pt1;i++)
-    {
-        /*Filho 1 recebe o cromossomo de 0 até ponto_de_corte do pai 1*/
+    for(int i=0;i<pt1;i++){
         filho1->cromossomo1[i] = ind1->cromossomo1[i];
-        /*Filho 2 recebe o cromossomo de 0 até ponto_de_corte do pai 2*/
-        filho2->cromossomo1[i] = ind2->cromossomo1[i]; 
+        filho2->cromossomo1[i] = ind2->cromossomo1[i];
     }
-    for(int i=pt1;i<TAM_CROMOSSOMO1;i++)
-    {
-        /*Filho 1 recebe o cromossomo de ponto_de_corte até 
-        o fim do cromossomo do pai 2*/
+    for(int i=pt1;i<TAM_CROMOSSOMO1;i++){
         filho1->cromossomo1[i] = ind2->cromossomo1[i];
-        /*Filho 2 recebe o cromossomo de ponto_de_corte até
-        o fim do cromossomo do pai 1*/
         filho2->cromossomo1[i] = ind1->cromossomo1[i];
     }
-    /*pt2 é o indice de corte no cromossomo 2*/
-    int pt2 = rand()%TAM_CROMOSSOMO2;/*numeros de 0 a TAM_CROMOSSOMO2 - 1*/
+    pt2 = rand()%TAM_CROMOSSOMO2;
 
-    for(int i=0;i<pt2;i++)
-    {
-        /*Filho 1 recebe o cromossomo de 0 até ponto_de_corte do pai 1*/
+    for(int i=0;i<pt2;i++){
         filho1->cromossomo2[i] = ind1->cromossomo2[i];
-        /*Filho 2 recebe o cromossomo de 0 até ponto_de_corte do pai 2*/
         filho2->cromossomo2[i] = ind2->cromossomo2[i];
     }
-    for(int i=pt2;i<TAM_CROMOSSOMO2;i++)
-    {
-        /*Filho 1 recebe o cromossomo de ponto_de_corte até 
-        o fim do cromossomo do pai 2*/
+    for(int i=pt2;i<TAM_CROMOSSOMO2;i++){
         filho1->cromossomo2[i] = ind2->cromossomo2[i];
-        /*Filho 2 recebe o cromossomo de ponto_de_corte até
-        o fim do cromossomo do pai 1*/
         filho2->cromossomo2[i] = ind1->cromossomo2[i];
     }
-
+    
     atualiza_individuo(filho1);
     atualiza_individuo(filho2);
 
@@ -182,6 +168,7 @@ void crossover(individuo* ind1,individuo* ind2,
     geracao_filhos++; /*A geração dos filhos é a próxima geração, ou seja, +1*/
     filho1->geracao = geracao_filhos;
     filho2->geracao = geracao_filhos;
+
 }
 
 void copia_individuo(individuo* ind, individuo* ind_copiado)
@@ -193,4 +180,28 @@ void copia_individuo(individuo* ind, individuo* ind_copiado)
         ind->cromossomo2[i] = ind_copiado->cromossomo2[i];
     ind->nota = ind_copiado->nota;
     ind->geracao = ind_copiado->geracao;
+}
+
+void inicia_lista(individuo* lista)
+{
+    for(int i=0;i<TAM_POPULACAO;i++)
+    {
+        lista[i].t = cria_trelica();
+        for(int j=0;j<TAM_CROMOSSOMO1;j++)
+            lista[i].cromossomo1[j] = barra_comprimento_rand();
+        for(int k=0;k<TAM_CROMOSSOMO2;k++)
+            lista[i].cromossomo2[k] = barra_area_rand();
+        for(int l=0;l<NUM_FORCAS_CARREG;l++)
+            lista[i].t->F[l]=F_atuais[l];
+        atualiza_individuo(lista+i);
+    }  
+}
+
+individuo* cria_individuo(void)
+{
+    individuo* i = (individuo*)malloc(sizeof(trelica));
+    if(!i){
+        printf("Faltou memória!\n");
+    }
+    i->t = cria_trelica();
 }

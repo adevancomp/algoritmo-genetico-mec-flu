@@ -185,3 +185,32 @@ int main(int argc, char const *argv[])
 
 
 ----------------- Teste 4 -----------------
+
+------------------ Teste 5 ----------------
+
+    individuo filho1,filho2,nova_populacao[TAM_POPULACAO];
+    filho1.t = cria_trelica();
+    filho2.t = cria_trelica();
+    for(int i=0;i<NUM_FORCAS_CARREG;i++){
+        filho1.t->F[i] = F_atuais[i];
+        filho2.t->F[i] = F_atuais[i];
+    }
+    inicia_lista(nova_populacao);/*Inicia a nova população com valores aleatórios*/
+    
+    srand(time(NULL));
+    inicia_populacao();
+    qsort(lista_individuos,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+
+    for(int i=0;i<QTD_GERACOES;i++)
+    {
+        crossover(lista_individuos+selecao(),lista_individuos+selecao(),&filho1,&filho2);
+        printf("Filho 1");
+        exibe_individuo(&filho1);
+        printf("Filho 2");
+        exibe_individuo(&filho2);
+        printf("\n\n");
+    }
+
+
+
+------------------- Teste 5 ----------------

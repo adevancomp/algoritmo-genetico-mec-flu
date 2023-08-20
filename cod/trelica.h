@@ -54,6 +54,7 @@
     extern double* RAx,*RAy,*REy;
     extern double* F,*FN;
     extern int VF_C;
+    extern double F_atuais[5];
 
     int igual(double a, double b);
     double barra_comprimento_rand(void);
