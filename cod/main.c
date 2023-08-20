@@ -49,8 +49,9 @@ int main(int argc, char const *argv[])
         if(lista_individuos[0].nota> melhor_individuo.nota){
             copia_individuo(&melhor_individuo,lista_individuos);
         }
+        printf("geracao:%d fitness:%f\n",lista_individuos[0].geracao,lista_individuos[0].nota);
     }
 
-    printf("Nota do melhor individuo:%f\n",melhor_individuo.nota);
+    exibe_individuo(&melhor_individuo);
     return 0;
 }

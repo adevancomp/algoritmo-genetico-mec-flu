@@ -8,7 +8,7 @@ cálculos de Normal na Barra(Real e Virtual)*/
 double* RAx,*RAy,*REy;
 double* F,*FN;
 int VF_C;
-double F_atuais[] = {10,10,10,10,10};
+double F_atuais[] = {0,70,10,40,10};
 
 int igual(double a, double b) {
     /*Comparador de igual para 
