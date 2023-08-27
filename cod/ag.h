@@ -11,11 +11,11 @@
     /*Quantidade de genes no cromossomo 2: áreas das barras*/
     #define TAM_CROMOSSOMO2 13
     /*Quantidade de indivíduos em uma população*/
-    #define TAM_POPULACAO 1500
+    #define TAM_POPULACAO 1000
     /*Taxa de mutação 0 (0% de mutação) e 1.0 (100% de mutação)*/
-    #define TAXA_MUTACAO 0.05
+    #define TAXA_MUTACAO 0.10
     /*Quantidade de gerações para um determinado AG*/
-    #define QTD_GERACOES 120
+    #define QTD_GERACOES 700
     /*No máximo, um indivíduo fica QTD_MAX_MELHOR vezes seguidas como o melhor em uma rodada*/
     #define QTD_MAX_MELHOR 5
     /*Imprecisão considerada em fins de comparação*/

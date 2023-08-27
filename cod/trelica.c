@@ -269,6 +269,7 @@ void calcula_trelica(trelica* t)
     metodo_dos_nos(t,1);/*Calcula as reações e forças normais VIRTUAIS*/
 
     calcula_deslocamento(t);/*Calcula o deslocamento em mm*/
+    calcula_tensao_barra(t);/*Cálcula a tensão de carregamento em cada barra Pa*/
 }
 
 void calcula_comprimento_barras(double* barras)
@@ -331,10 +332,10 @@ trelica* cria_trelica(void)
 
 void exibe_trelica(trelica* t)
 {
-    printf("\nBarra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
+    printf("\nBarra  A(m²)        L(m)       N(kN)     n(kN)    Delta (mm) Tensões(Pa)\n");
     for(int j=0;j<NUM_BARRAS;j++)
     {
-        printf("%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",j+1,t->A[j],t->barras[j],t->FN[j],t->VFN[j],t->DY[j]);
+        printf("%2.d    %6.2e   %6.2e  %9.2e %10.2e %10.2e %10.2e\n",j+1,t->A[j],t->barras[j],t->FN[j],t->VFN[j],t->DY[j],t->Tensoes[j]);
     }
     for(int i=0;i<NUM_FORCAS_CARREG;i++)
         printf("F[%d]: %5.2f ",i,t->F[i]);
@@ -357,6 +358,7 @@ void copia_trelica(trelica* t1,trelica* tcopiado)
         t1->VFN[i]     = tcopiado->VFN[i];
         t1->A[i]       = tcopiado->A[i];
         t1->DY[i]      = tcopiado->DY[i];
+        t1->Tensoes[i] = tcopiado->Tensoes[i];
     }
     for(int i=0;i<NUM_FORCAS_CARREG;i++)
         t1->F[i] = tcopiado->F[i];
@@ -374,4 +376,14 @@ void copia_trelica(trelica* t1,trelica* tcopiado)
     t1->M = tcopiado->M;
     t1->tipo = tcopiado->tipo;
     t1->massa = tcopiado->massa;
+}
+
+void calcula_tensao_barra(trelica* t)
+{
+    /*Função que calcula a tensão na seção tranversal das barras
+    com base na seguinte fórmula : σ = F_axial / A
+    Observação: Recalcular todaz vez que FN for calculada ou
+    a área mudar*/
+    for(int i=0;i<NUM_BARRAS;i++)
+        t->Tensoes[i] = fabs(((t->FN[i])*1000)/t->A[i]);
 }

@@ -5,8 +5,10 @@
     #define NUM_FORCAS_CARREG 5
     #define EPSILON 1e-4
     #define PI 3.1415926535897932384626
-    #define DEFAULT_E 2e8 /*Aço*/
-    #define DEFAULT_M 7870 /*Aço*/
+    #define DEFAULT_E 2e8 /* (Pa) Aço*/
+    #define DEFAULT_M 7870 /* (kg/m³)  Aço*/
+    #define SIGMA_E 300 /*(MPa) limite de escoamento do aço estrutural ASTM A36*/
+    #define SG 3.0 /*Fator de segurança*/
 
     typedef struct 
     {
@@ -25,6 +27,8 @@
         double A[NUM_BARRAS];
         /*Deltas parciais do cálculo do deslocamento de cada barra (mm)*/
         double DY[NUM_BARRAS];
+        /*Tensões axiais nas barras (Pa)*/
+        double Tensoes[NUM_BARRAS];
         /*Reações nos pontos de apoio 
         dispostos nos nós A e E (kN) */
         double RAx,RAy,REy;
@@ -84,5 +88,6 @@
     void exibe_trelica(trelica* t);
     double calcula_vao_livre(trelica* t);
     void copia_trelica(trelica* t1,trelica* tcopiado);
+    void calcula_tensao_barra(trelica* t);
     
 #endif

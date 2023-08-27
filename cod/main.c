@@ -46,6 +46,7 @@ int main(int argc, char const *argv[])
         qsort(nova_populacao,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
         for(int l=0;l<TAM_POPULACAO;l++)
             copia_individuo(lista_individuos+l,nova_populacao+l);
+        
         if(lista_individuos[0].nota> melhor_individuo.nota){
             copia_individuo(&melhor_individuo,lista_individuos);
         }

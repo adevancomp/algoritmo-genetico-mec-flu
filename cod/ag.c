@@ -34,8 +34,22 @@ double fitness(individuo* ind)
 {
     double nota = 1.0/(0.1*ind->t->massa+ind->t->desloc_C);
     double vao = calcula_vao_livre(ind->t);
-    /*Aplicação de penalidade referente a restrição de o vão mínimo ser de VAO_MINIMO metros*/
-    ind->nota = (vao>VAO_MINIMO || igual_individuo(vao,VAO_MINIMO)) ? nota : nota*0.4;
+    /*Restrição de o vão mínimo da treliça  ser de VAO_MINIMO metros*/
+    int cond1 = (vao>VAO_MINIMO || igual_individuo(vao,VAO_MINIMO));
+    /*Restrição de tensões axiais das barras da 
+    treliça devem ficar abaixo ou igual a sigmaE/Sg*/
+    int cond2 = 0;
+    int pena = 0.6;
+    for(int i=0;i<NUM_BARRAS;i++)
+    {
+        /*Conversão de MPa para Pa da fração SIGMA_E/SG*/
+        if(ind->t->Tensoes[i] > ((SIGMA_E/SG)*pow(10,6))){
+            cond2 = 1;
+            pena-=0.1;
+        }
+    }
+    /*Aplicação de penalidade dado cond1 e cond2*/
+    ind->nota = (cond2 || cond1) ? nota : nota*pena;
     return nota;   
 }
 
