@@ -11,11 +11,11 @@
     /*Quantidade de genes no cromossomo 2: áreas das barras*/
     #define TAM_CROMOSSOMO2 13
     /*Quantidade de indivíduos em uma população*/
-    #define TAM_POPULACAO 70
+    #define TAM_POPULACAO 1500
     /*Taxa de mutação 0 (0% de mutação) e 1.0 (100% de mutação)*/
     #define TAXA_MUTACAO 0.05
     /*Quantidade de gerações para um determinado AG*/
-    #define QTD_GERACOES 100
+    #define QTD_GERACOES 120
     /*No máximo, um indivíduo fica QTD_MAX_MELHOR vezes seguidas como o melhor em uma rodada*/
     #define QTD_MAX_MELHOR 5
     /*Imprecisão considerada em fins de comparação*/
@@ -44,7 +44,6 @@
     extern individuo lista_individuos[TAM_POPULACAO];
     extern individuo melhor_individuo;
     extern int geracao_atual;
-    extern double F_atuais[5];
 
     int igual_individuo(double a, double b);
     int func_compara_individuos(const void* ind1,const void* ind2);
@@ -58,5 +57,6 @@
     void crossover(individuo* ind1,individuo* ind2,
                individuo* filho1,individuo* filho2); 
     void copia_individuo(individuo* ind, individuo* ind_copiado);
-    
+    void inicia_lista(individuo* lista);
+    individuo* cria_individuo(void);
 #endif

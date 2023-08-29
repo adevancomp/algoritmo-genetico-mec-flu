@@ -8,6 +8,7 @@ cálculos de Normal na Barra(Real e Virtual)*/
 double* RAx,*RAy,*REy;
 double* F,*FN;
 int VF_C;
+double F_atuais[] = {0,70,10,40,10};
 
 int igual(double a, double b) {
     /*Comparador de igual para 
@@ -321,6 +322,8 @@ trelica* cria_trelica(void)
         printf("Faltou memória!\n");
         exit(1);
     }
+    for(int i=0;i<NUM_FORCAS_CARREG;i++)
+        t->F[i] = F_atuais[i];
     t->E = DEFAULT_E;
     t->M = DEFAULT_M;
     return t;
@@ -333,7 +336,9 @@ void exibe_trelica(trelica* t)
     {
         printf("%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",j+1,t->A[j],t->barras[j],t->FN[j],t->VFN[j],t->DY[j]);
     }
-    printf("Deslocamento Final: %.4f mm\n",t->desloc_C);
+    for(int i=0;i<NUM_FORCAS_CARREG;i++)
+        printf("F[%d]: %5.2f ",i,t->F[i]);
+    printf("\nDeslocamento Final: %.4f mm\n",t->desloc_C);
     printf("Massa: %.4f kg\n",t->massa);
 }
 
