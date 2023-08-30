@@ -44,10 +44,26 @@ int main(int argc, char const *argv[])
             copia_individuo(nova_populacao+k+1,&filho2);
         }
         qsort(nova_populacao,TAM_POPULACAO,sizeof(individuo),func_compara_individuos);
+        salvar_individuo(nova_populacao);
+        
         for(int l=0;l<TAM_POPULACAO;l++)
             copia_individuo(lista_individuos+l,nova_populacao+l);
         if(lista_individuos[0].nota> melhor_individuo.nota){
             copia_individuo(&melhor_individuo,lista_individuos);
+            FILE* fp = fopen(HISTORICO_SOLUCOES,"a");
+            if(fp == NULL){
+                printf("Erro ao abrir o arquivo %s\n",HISTORICO_SOLUCOES);
+                exit(1);
+            }
+            fprintf(fp,"Nota: %.5f Geracao:%d Deslocamento:%e\n",nova_populacao[0].nota,nova_populacao[0].geracao,nova_populacao[0].t->desloc_C);
+            fprintf(fp,"L[] = ");
+            for(int w=0;w<TAM_CROMOSSOMO1;w++)
+                fprintf(fp,"%e, ",nova_populacao[0].cromossomo1[w]);
+            fprintf(fp,"\n");
+            fprintf(fp,"A[] = ");
+            for(int w=0;w<TAM_CROMOSSOMO2;w++)
+                fprintf(fp,"%e, ",nova_populacao[0].cromossomo2[w]);
+            fprintf(fp,"\n\n");
         }
         printf("geracao:%d fitness:%f\n",lista_individuos[0].geracao,lista_individuos[0].nota);
     }

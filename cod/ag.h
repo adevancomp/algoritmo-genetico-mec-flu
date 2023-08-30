@@ -59,4 +59,5 @@
     void copia_individuo(individuo* ind, individuo* ind_copiado);
     void inicia_lista(individuo* lista);
     individuo* cria_individuo(void);
+    void salvar_individuo(individuo* ind);
 #endif

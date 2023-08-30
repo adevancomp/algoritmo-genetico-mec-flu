@@ -342,6 +342,19 @@ void exibe_trelica(trelica* t)
     printf("Massa: %.4f kg\n",t->massa);
 }
 
+void salvar_trelica(trelica* t,FILE* arquivo) {
+
+    fprintf(arquivo, "Barra  A(m²)        L(m)       N(kN)     n(kN)       Delta (mm)\n");
+    for (int j = 0; j < NUM_BARRAS; j++) {
+        fprintf(arquivo, "%2.d    %6.2e   %6.2e  %9.2e   %9.2e   %7.2e\n",
+                j + 1, t->A[j], t->barras[j], t->FN[j], t->VFN[j], t->DY[j]);
+    }
+    for (int i = 0; i < NUM_FORCAS_CARREG; i++)
+        fprintf(arquivo, "F[%d]: %5.2f ", i, t->F[i]);
+    fprintf(arquivo, "\nDeslocamento Final: %.4f mm\n", t->desloc_C);
+    fprintf(arquivo, "Massa: %.4f kg\n", t->massa);
+}
+
 double calcula_vao_livre(trelica* t)
 {
     /*O comprimento do vão livre é a soma dos comprimentos

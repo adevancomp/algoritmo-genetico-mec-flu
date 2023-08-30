@@ -1,3 +1,4 @@
+#include <stdio.h>
 #ifndef TRELICA_H
 #define TRELICA_H
 
@@ -84,5 +85,5 @@
     void exibe_trelica(trelica* t);
     double calcula_vao_livre(trelica* t);
     void copia_trelica(trelica* t1,trelica* tcopiado);
-    
+    void salvar_trelica(trelica* t,FILE* arquivo);
 #endif

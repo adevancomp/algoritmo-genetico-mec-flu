@@ -65,6 +65,19 @@ void exibe_individuo(individuo* ind)
     printf("\n\n");
 }
 
+void salvar_individuo(individuo* ind) {
+    FILE* arquivo = fopen("ag.txt", "a");  // Usando "a" para adicionar ao arquivo, caso ele já exista
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return;
+    }
+    salvar_trelica(ind->t,arquivo);
+    fprintf(arquivo, "\n============ Indivíduo ============\n");
+    fprintf(arquivo, "Nota: %7.5f Geração:%d\n\n", ind->nota, ind->geracao);
+    fclose(arquivo);
+}
+
 void inicia_populacao(void)
 {
     /*Função preenche o array lista_individuos
