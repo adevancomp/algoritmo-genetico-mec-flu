@@ -212,7 +212,7 @@ void inicia_lista(individuo* lista)
 
 individuo* cria_individuo(void)
 {
-    individuo* i = (individuo*)malloc(sizeof(trelica));
+    individuo* i = (individuo*)malloc(sizeof(individuo));
     if(!i){
         printf("Faltou memória!\n");
     }
